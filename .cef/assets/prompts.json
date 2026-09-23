@@ -1,0 +1,35 @@
+{
+  "tool": "higgsfield",
+  "generatedAt": "2026-09-23T16:53:26.436Z",
+  "note": "Run these prompts through the Higgsfield MCP to generate and cache the images.",
+  "images": [
+    {
+      "id": "hero",
+      "kind": "hero",
+      "target": "public/images/hero.avif",
+      "prompt": "Hero image for a hospitality website. Professional warm, human style, on-brand, accent color #2563eb, no text, high resolution.",
+      "alt": "ennie-coffee hero image"
+    },
+    {
+      "id": "background",
+      "kind": "background",
+      "target": "public/images/background.avif",
+      "prompt": "Subtle abstract background suited to a hospitality brand. Professional warm, human style, on-brand, accent color #2563eb, no text, high resolution.",
+      "alt": ""
+    },
+    {
+      "id": "illustration",
+      "kind": "illustration",
+      "target": "public/images/illustration.avif",
+      "prompt": "Brand illustration representing hospitality services. Professional warm, human style, on-brand, accent color #2563eb, no text, high resolution.",
+      "alt": "hospitality illustration"
+    },
+    {
+      "id": "marketing",
+      "kind": "marketing",
+      "target": "public/images/marketing.avif",
+      "prompt": "Marketing visual for ennie-coffee, a hospitality brand. Professional warm, human style, on-brand, accent color #2563eb, no text, high resolution.",
+      "alt": "ennie-coffee marketing visual"
+    }
+  ]
+}

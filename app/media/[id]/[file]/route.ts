@@ -1,0 +1,52 @@
+import { NextResponse, type NextRequest } from 'next/server';
+import { z } from 'zod';
+import { hasDatabase } from '@/lib/config/env';
+import { connection } from '@/lib/db/client';
+import { logger } from '@/lib/log';
+import { readVariant } from '@/lib/media/store';
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+const FILE = /^(\d{2,4})\.(avif|webp)$/;
+const CONTENT_TYPE = { avif: 'image/avif', webp: 'image/webp' } as const;
+
+function notFound() {
+  return new NextResponse(null, {
+    status: 404,
+    headers: { 'Cache-Control': 'public, max-age=60' },
+  });
+}
+
+/**
+ * Serves a stored image variant. Media ids are random and a stored variant never changes, so the
+ * response is cacheable forever by browsers and any shared cache in front of the site.
+ */
+export async function GET(
+  _request: NextRequest,
+  segment: { params: Promise<{ id: string; file: string }> },
+) {
+  const { id, file } = await segment.params;
+  const match = FILE.exec(file);
+  if (!match || !z.uuid().safeParse(id).success || !hasDatabase()) return notFound();
+  const [, width, format] = match as unknown as [string, string, 'avif' | 'webp'];
+
+  try {
+    const variant = await readVariant(connection().db, id, Number(width), format);
+    if (!variant) return notFound();
+    return new NextResponse(new Uint8Array(variant.bytes), {
+      status: 200,
+      headers: {
+        'Content-Type': CONTENT_TYPE[format],
+        'Content-Length': String(variant.byteSize),
+        'Cache-Control': 'public, max-age=31536000, immutable',
+        'X-Content-Type-Options': 'nosniff',
+        'Content-Security-Policy': "default-src 'none'; sandbox",
+        'Cross-Origin-Resource-Policy': 'same-origin',
+      },
+    });
+  } catch (error) {
+    logger.error('media.read_failed', { id, error: String(error) });
+    return new NextResponse(null, { status: 503, headers: { 'Retry-After': '10' } });
+  }
+}

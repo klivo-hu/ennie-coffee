@@ -1,17 +1,30 @@
-# PRODUCTION — the Klivo Docker hosting platform runs this file verbatim.
-# Local development is docker-compose.dev.yml; never move a local convenience into this file,
-# and never add a docker-compose.override.yml (Compose merges it here automatically, so it would
-# reach production past the platform's security validation of this file).
+# PRODUCTION — the Klivo Docker hosting platform runs this file verbatim (after its security scan).
+# Local work: docker-compose.local.yml (production-like, on localhost) or docker-compose.dev.yml
+# (hot reload). Never add a docker-compose.override.yml: Compose merges it into every bare
+# `docker compose up`, including the platform's deploy, past its validation of this file.
 #
-# The container name and network embed the client slug "ennie-coffee" — they must match the client
-# created in the panel.
+# Topology (docs/architecture.md):
+#   Traefik ──▶ hosting_ennie-coffee_web (HAProxy, least-connections) ──▶ app × 2 ──▶ db
+#
+# The container name and network embed the client slug "ennie-coffee"; they must match the client
+# created in the panel. Every service caps its logs, restarts unless stopped, has resource limits,
+# and joins only the client's own network.
+
 services:
-  hosting_ennie-coffee_web:
-    build: .
-    container_name: hosting_ennie-coffee_web
+  # First service on purpose: a review preview copies the first service alone (build, image,
+  # environment, expose, command). Without a database the app serves the published menu from its
+  # seed data, so a preview renders correctly from this single container (KH-13).
+  app:
+    build:
+      context: .
+      target: runner
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      NODE_ENV: production
+      # Traefik + HAProxy sit in front of every instance.
+      TRUSTED_PROXY_HOPS: '2'
     expose:
       - '80'
     networks:
@@ -19,22 +32,64 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    deploy:
+      # Stateless instances (all shared state is in PostgreSQL); raise to scale out.
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 768M
+    stop_grace_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  hosting_ennie-coffee_web:
+    build: ./docker/haproxy
+    container_name: hosting_ennie-coffee_web
+    restart: unless-stopped
+    expose:
+      - '80'
+    networks:
+      - client_ennie-coffee_net
+    depends_on:
+      - app
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
   db:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: app
-      POSTGRES_PASSWORD: app
-      POSTGRES_DB: app
+      POSTGRES_USER: ${POSTGRES_USER:-ennie}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-ennie}
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
       - client_ennie-coffee_net
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U app']
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+    stop_grace_period: 30s
     logging:
       driver: json-file
       options:

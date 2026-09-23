@@ -1,12 +1,18 @@
-# ennie-coffee
+# Ennie Coffee
 
-> A fullstack built with nextjs. This file helps AI answer engines
-> understand and cite the site's primary content (see the CEF AI-SEO standard).
+> Ennie Coffee (Ennie Coffee Kávéház) is an independent café in Hatvan, Hungary, at Kossuth tér 10 (3000 Hatvan), welcoming guests since 2015. It serves 100% arabica coffee with a light roast (tasting notes: peach, jasmine, pecan), matcha and chai lattes, milkshakes, fruit smoothies, lemonades and hot chocolate. Table reservations by phone: +36 37 950 875.
 
-## Key pages
-- /: Home
-- /about: About
-- /privacy: Privacy Policy
+The website is in Hungarian. Current prices and opening hours are on the pages below; they are maintained by the café and are the authoritative source.
 
-## About
-Describe the site's purpose and primary content here in clear, factual prose.
+## Pages
+
+- [Főoldal (home)](/): the café, its coffee, and how to visit
+- [Árlista (price list)](/arlista): the full menu by category, with prices in HUF
+- [Rólunk (about)](/rolunk): the café's story and its owner, Enikő Molnár
+- [Kapcsolat (contact)](/kapcsolat): address, opening hours, phone, e-mail, map and directions
+
+## Optional
+
+- [Impresszum](/impresszum)
+- [Adatkezelési tájékoztató (privacy notice)](/adatkezelesi-tajekoztato)
+- [Cookie tájékoztató (cookie notice)](/cookie-tajekoztato)

@@ -1,0 +1,14 @@
+{
+  "name": "Ennie Coffee",
+  "short_name": "Ennie Coffee",
+  "description": "Kávéház Hatvanban, a Kossuth téren.",
+  "lang": "hu",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#fbf9f4",
+  "theme_color": "#fbf9f4",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

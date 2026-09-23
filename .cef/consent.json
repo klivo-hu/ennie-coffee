@@ -12,7 +12,7 @@
       },
       "description": {
         "en": "Required for the site to work — security, session, and your consent choice itself. These cannot be switched off.",
-        "hu": "A működéshez szükséges — biztonság, munkamenet és maga a hozzájárulási döntés. Ezek nem kapcsolhatók ki."
+        "hu": "A hozzájárulási döntésed tárolása, illetve a munkatársak biztonságos belépése az adminisztrációs felületre. Ezek nem kapcsolhatók ki."
       },
       "googleSignals": ["security_storage"]
     },
@@ -21,65 +21,37 @@
       "essential": false,
       "defaultGranted": false,
       "label": {
-        "en": "Functional",
-        "hu": "Funkcionális"
+        "en": "External content (Google Maps)",
+        "hu": "Külső tartalmak (Google Térkép)"
       },
       "description": {
-        "en": "Remembers preferences such as language and theme. Declining keeps the site working with defaults.",
-        "hu": "Megjegyzi a beállításokat, például a nyelvet és a témát. Elutasítás esetén az alapértelmezések maradnak."
+        "en": "The embedded Google Map. When it loads, Google may set cookies and receive data about the visit. If declined, a directions link replaces the map.",
+        "hu": "A beágyazott Google Térkép. Betöltéskor a Google sütiket helyezhet el, és adatot kaphat a látogatásodról. Elutasítás esetén a térkép helyén útvonaltervező link jelenik meg."
       },
       "googleSignals": ["functionality_storage", "personalization_storage"]
-    },
-    {
-      "id": "analytics",
-      "essential": false,
-      "defaultGranted": false,
-      "label": {
-        "en": "Analytics",
-        "hu": "Analitika"
-      },
-      "description": {
-        "en": "Measures how pages are used so they can be improved. Nothing is loaded until you allow it.",
-        "hu": "Méri az oldalak használatát a fejlesztés érdekében. Hozzájárulás nélkül semmi nem töltődik be."
-      },
-      "googleSignals": ["analytics_storage"]
-    },
-    {
-      "id": "marketing",
-      "essential": false,
-      "defaultGranted": false,
-      "label": {
-        "en": "Marketing",
-        "hu": "Marketing"
-      },
-      "description": {
-        "en": "Used to measure and personalize advertising. Nothing is loaded until you allow it.",
-        "hu": "Hirdetések méréséhez és személyre szabásához. Hozzájárulás nélkül semmi nem töltődik be."
-      },
-      "googleSignals": ["ad_storage", "ad_user_data", "ad_personalization"]
     }
   ],
-  "placement": "bottom-banner",
+  "placement": "bottom-left-card",
   "tone": "card",
   "blocking": false,
   "rejectAllVisible": true,
   "showCategoriesUpFront": false,
   "storage": {
-    "key": "cef-consent",
+    "key": "ennie-consent",
     "maxAgeDays": 180,
     "medium": "cookie"
   },
-  "googleConsentMode": true,
+  "googleConsentMode": false,
   "reopenSelector": "[data-consent-reopen]",
-  "policyPath": "/legal/cookie-tajekoztato",
+  "policyPath": "/cookie-tajekoztato",
   "copy": {
     "title": {
       "en": "Choose what we store",
-      "hu": "Válassza ki, mit tárolunk"
+      "hu": "Te döntöd el, mit tárolunk"
     },
     "body": {
       "en": "We store only what this site needs to work until you choose otherwise. Analytics and marketing stay off until you allow them.",
-      "hu": "Amíg Ön másként nem dönt, csak a működéshez szükséges adatokat tároljuk. Az analitika és a marketing kikapcsolva marad, amíg nem engedélyezi."
+      "hu": "Az oldal csak a működéshez szükséges adatokat tárolja. Egyetlen külső tartalmat használunk, a Google Térképet — ez csak akkor töltődik be, ha engedélyezed."
     },
     "acceptAll": {
       "en": "Allow all",
@@ -87,11 +59,11 @@
     },
     "rejectAll": {
       "en": "Reject all",
-      "hu": "Mindet elutasítom"
+      "hu": "Csak a szükségesek"
     },
     "customize": {
       "en": "Choose purposes",
-      "hu": "Célok kiválasztása"
+      "hu": "Beállítások"
     },
     "save": {
       "en": "Save choices",
@@ -107,7 +79,7 @@
     },
     "policyLink": {
       "en": "Read the cookie policy",
-      "hu": "Süti tájékoztató megtekintése"
+      "hu": "Cookie tájékoztató"
     },
     "reopen": {
       "en": "Cookie settings",

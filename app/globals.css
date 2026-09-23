@@ -1,0 +1,320 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Ennie Coffee design tokens.
+ *
+ * This file is the single source of truth for every visual value in the project; Tailwind reads
+ * the same custom properties through tailwind.config.ts. The rationale for each family is
+ * recorded in .claude/memory/design-system.md. Colors are stored as sRGB channels so Tailwind's
+ * opacity modifiers keep working (`bg-sage-700/10`).
+ */
+
+:root {
+  /* ---------------------------------------------------------------- palette */
+  --cef-ivory-rgb: 251 249 244; /* page canvas — warm white */
+  --cef-paper-rgb: 245 242 234; /* textured surface base */
+  --cef-white-rgb: 255 255 255;
+
+  --cef-sage-50-rgb: 228 236 221; /* pastel sage surface */
+  --cef-sage-100-rgb: 220 229 214;
+  --cef-sage-200-rgb: 198 212 191;
+  --cef-sage-300-rgb: 169 189 159;
+  --cef-sage-400-rgb: 139 163 128;
+  --cef-sage-500-rgb: 111 137 102; /* muted sage — decorative only (3.7:1) */
+  --cef-sage-600-rgb: 88 113 81;
+  --cef-sage-700-rgb: 70 92 65; /* deep sage — accents, links on light */
+  --cef-sage-800-rgb: 54 72 47; /* primary action */
+  --cef-sage-900-rgb: 38 52 35;
+
+  --cef-ink-rgb: 35 40 34; /* soft charcoal with a green undertone */
+  --cef-ink-soft-rgb: 90 97 87; /* secondary text on neutral surfaces (≥ 5.7:1) */
+  --cef-ink-sage-rgb: 79 94 74; /* secondary text on sage surfaces (≥ 5.3:1) */
+  --cef-line-rgb: 227 222 211; /* hairlines — warm neutral */
+  --cef-line-strong-rgb: 205 198 184;
+
+  --cef-danger-rgb: 150 48 38;
+  --cef-danger-soft-rgb: 248 234 230;
+  --cef-success-rgb: 54 96 58;
+  --cef-warning-rgb: 138 92 20;
+  --cef-warning-soft-rgb: 250 241 222;
+
+  /* Semantic aliases — components use these, never the raw palette where a role exists. */
+  --cef-background-rgb: var(--cef-ivory-rgb);
+  --cef-surface-rgb: var(--cef-white-rgb);
+  --cef-foreground-rgb: var(--cef-ink-rgb);
+  --cef-muted-rgb: var(--cef-ink-soft-rgb);
+  --cef-border-rgb: var(--cef-line-rgb);
+  --cef-primary-rgb: var(--cef-sage-800-rgb);
+  --cef-primary-foreground-rgb: var(--cef-ivory-rgb);
+  --cef-accent-rgb: var(--cef-sage-700-rgb);
+  --cef-focus-rgb: var(--cef-sage-700-rgb);
+
+  /* ---------------------------------------------------------------- typography */
+  /* Font families are injected by next/font in app/layout.tsx (--font-display, --font-sans). */
+  --cef-font-display: var(--font-display), 'Iowan Old Style', Georgia, serif;
+  --cef-font-sans: var(--font-sans), 'Segoe UI', system-ui, sans-serif;
+
+  /*
+   * Fluid type ramp. Adjacent steps keep at least a 1.25 ratio so every level reads as a level;
+   * the display cap stays under 6rem. Hungarian compounds are long, so display sizes are tuned to
+   * keep words like "szeretettel" whole on a 375px screen.
+   */
+  --cef-text-display-xl: clamp(2.625rem, 1.55rem + 4.3vw, 5.25rem);
+  --cef-text-display-lg: clamp(2.125rem, 1.45rem + 2.6vw, 3.625rem);
+  --cef-text-display-md: clamp(1.625rem, 1.25rem + 1.45vw, 2.5rem);
+  --cef-text-title: clamp(1.25rem, 1.15rem + 0.4vw, 1.5rem);
+  --cef-text-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  --cef-text-body: 1rem;
+  --cef-text-control: 0.9375rem; /* buttons and navigation */
+  --cef-text-small: 0.875rem;
+  --cef-text-caption: 0.8125rem;
+
+  --cef-leading-display: 1.04;
+  --cef-leading-heading: 1.15;
+  --cef-leading-title: 1.3;
+  --cef-leading-body: 1.65;
+  --cef-tracking-display: -0.022em;
+  --cef-tracking-heading: -0.012em;
+  --cef-tracking-label: 0.02em;
+
+  /* ---------------------------------------------------------------- space */
+  --cef-space-section: clamp(4.5rem, 2.75rem + 6.5vw, 9rem);
+  --cef-space-section-tight: clamp(3.5rem, 2.25rem + 4.5vw, 6.5rem);
+  --cef-space-gutter: clamp(1.25rem, 0.75rem + 2.4vw, 3rem);
+  --cef-space-stack: clamp(2.5rem, 1.75rem + 3vw, 4.5rem);
+
+  /* ---------------------------------------------------------------- layout */
+  --cef-container-wide: 78rem; /* 1248px — page grid */
+  --cef-container-content: 68rem; /* 1088px — editorial blocks */
+  --cef-container-text: 40rem; /* ~68ch at body size — reading measure */
+
+  /* ---------------------------------------------------------------- shape */
+  /*
+   * Radius is assigned by role, never by eye. Controls share one radius; anything that holds
+   * controls is a panel whose radius is the control radius plus its 10px inset, so the corners
+   * nest concentrically; photographs are the softest shape on the page.
+   */
+  --cef-radius-inline: 0.25rem; /* inline highlights, text-link focus shapes */
+  --cef-radius-control: 0.625rem; /* buttons, inputs, nav items, thumbnails */
+  --cef-radius-panel: 1.25rem; /* floating bars, dialogs, cards, image tiles (= control + 10px inset) */
+  --cef-radius-media: 2rem; /* large photographs, the map */
+  --cef-radius-arch: 999px; /* arch tops for portrait imagery */
+
+  /* ---------------------------------------------------------------- depth */
+  /* One depth language: soft, neutral, offset. Never combined with a hairline on the same box. */
+  --cef-shadow-soft:
+    0 1px 2px rgb(var(--cef-sage-900-rgb) / 0.06),
+    0 10px 28px -14px rgb(var(--cef-sage-900-rgb) / 0.22);
+  --cef-shadow-lift:
+    0 2px 4px rgb(var(--cef-sage-900-rgb) / 0.08),
+    0 22px 48px -20px rgb(var(--cef-sage-900-rgb) / 0.32);
+
+  /* ---------------------------------------------------------------- motion */
+  --cef-duration-fast: 160ms;
+  --cef-duration-base: 260ms;
+  --cef-duration-slow: 480ms;
+  --cef-ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* expo-out: arrivals */
+  --cef-ease-standard: cubic-bezier(0.2, 0, 0, 1); /* state changes */
+
+  /* ---------------------------------------------------------------- texture */
+  /*
+   * Paper grain: fractal noise rendered once by the browser and tiled. Alpha is kept at ~5% so it
+   * only reads up close — it adds depth without becoming a pattern.
+   */
+  --cef-texture-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.17 0 0 0 0 0.2 0 0 0 0 0.15 0 0 0 0.075 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --cef-texture-fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='480'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.09' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.33 0 0 0 0 0.25 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+
+  color-scheme: light;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    background-color: rgb(var(--cef-background-rgb));
+    color: rgb(var(--cef-foreground-rgb));
+    font-family: var(--cef-font-sans);
+    font-size: var(--cef-text-body);
+    line-height: var(--cef-leading-body);
+    font-feature-settings: 'kern', 'liga';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--cef-font-display);
+    font-weight: 420;
+    text-wrap: balance;
+    font-optical-sizing: auto;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Browser surfaces are themed too (CF-07). */
+  ::selection {
+    background: rgb(var(--cef-sage-200-rgb));
+    color: rgb(var(--cef-ink-rgb));
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--cef-focus-rgb));
+    outline-offset: 3px;
+  }
+
+  input,
+  textarea,
+  select {
+    caret-color: rgb(var(--cef-sage-800-rgb));
+  }
+
+  a {
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: 1px;
+  }
+
+  img,
+  svg,
+  video,
+  iframe {
+    max-width: 100%;
+  }
+
+  /* Prices and hours align in columns. */
+  .tabular {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  html {
+    scrollbar-color: rgb(var(--cef-sage-300-rgb)) rgb(var(--cef-ivory-rgb));
+  }
+}
+
+@layer components {
+  /*
+   * The three section surfaces. Every major section uses exactly one of these; heroes are the
+   * only exception. They share one warmth so a transition between any two reads as the same
+   * material changing tone, not as a new page.
+   */
+  .surface-canvas {
+    background-color: rgb(var(--cef-ivory-rgb));
+  }
+
+  .surface-sage {
+    background-color: rgb(var(--cef-sage-50-rgb));
+    --cef-muted-rgb: var(--cef-ink-sage-rgb);
+  }
+
+  .surface-paper {
+    background-color: rgb(var(--cef-paper-rgb));
+    background-image: var(--cef-texture-grain), var(--cef-texture-fibre);
+    background-size:
+      220px 220px,
+      480px 480px;
+  }
+}
+
+@layer components {
+  /* Long-form legal text: the reading measure, generous leading, and clear steps between parts. */
+  .legal-prose {
+    @apply text-body text-ink;
+  }
+  .legal-prose h2 {
+    @apply mt-14 font-display text-display-md text-ink first:mt-0;
+  }
+  .legal-prose h3 {
+    @apply mt-8 font-display text-title text-ink;
+  }
+  .legal-prose p {
+    @apply mt-4 text-ink-soft;
+  }
+  .legal-prose ul {
+    @apply mt-4 list-disc space-y-2 pl-5 text-ink-soft marker:text-sage-500;
+  }
+  .legal-prose a {
+    @apply text-sage-800 underline decoration-sage-800/30 underline-offset-4 hover:decoration-sage-800;
+  }
+  .legal-prose strong {
+    @apply font-semibold text-ink;
+  }
+  .legal-prose table {
+    @apply mt-6 w-full border-collapse text-left text-small;
+  }
+  .legal-prose th {
+    @apply border-b border-line-strong py-3 pr-4 font-semibold text-ink;
+  }
+  .legal-prose td {
+    @apply border-b border-line py-3 pr-4 align-top text-ink-soft;
+  }
+}
+
+@layer utilities {
+  .text-measure {
+    max-width: var(--cef-container-text);
+  }
+
+  .arch {
+    border-radius: var(--cef-radius-arch) var(--cef-radius-arch) var(--cef-radius-media)
+      var(--cef-radius-media);
+  }
+
+  /*
+   * Lets media inside a Container run out to the viewport's right edge while the text beside it
+   * stays on the column grid: the distance from the content edge to the viewport edge is the
+   * gutter plus half of whatever width exceeds the container.
+   */
+  .bleed-right {
+    margin-right: calc(
+      -1 * (var(--cef-space-gutter) + max(0px, (100vw - var(--cef-container-wide)) / 2))
+    );
+  }
+}
+
+/*
+ * Hero entrance gate.
+ *
+ * The inline script in app/layout.tsx adds `hero-motion` to <html> only when scripts run and the
+ * reader has not asked for reduced motion; the hero's GSAP timeline removes it the moment it has
+ * taken over the starting state, and the same script removes it after a short timeout if that
+ * never happens. With no script, reduced motion, or a failed bundle, the hero is simply visible.
+ */
+html.hero-motion [data-hero-enter],
+html.hero-motion [data-hero-accent],
+html.hero-motion [data-hero-shape] {
+  opacity: 0.001;
+}
+
+html.hero-motion [data-hero-line] {
+  transform: translateY(105%);
+}
+
+html.hero-motion [data-hero-curtain] {
+  transform: scaleY(1);
+}
+
+[data-hero-curtain] {
+  transform: scaleY(0);
+  transform-origin: 50% 0%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

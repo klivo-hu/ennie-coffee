@@ -1,0 +1,136 @@
+{
+  "pages": [
+    {
+      "id": "dashboard",
+      "name": "Dashboard",
+      "purpose": "The authenticated application home.",
+      "priority": "critical",
+      "seoImportance": "low",
+      "sections": ["metrics", "activity"],
+      "components": ["admin", "dashboard-widget", "chart", "table"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: the authenticated application home."
+    },
+    {
+      "id": "home",
+      "name": "Home",
+      "purpose": "Communicate the core value and route visitors to conversion.",
+      "priority": "critical",
+      "seoImportance": "high",
+      "sections": ["hero", "value", "proof", "features", "cta"],
+      "components": ["navbar", "hero", "features", "testimonials", "cta", "footer"],
+      "dependencies": [],
+      "rationale": "Expected for hospitality: communicate the core value and route visitors to conversion."
+    },
+    {
+      "id": "reservations",
+      "name": "Reservations",
+      "purpose": "Capture bookings.",
+      "priority": "critical",
+      "seoImportance": "medium",
+      "sections": ["form"],
+      "components": ["navbar", "contact", "form", "footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: capture bookings."
+    },
+    {
+      "id": "signup",
+      "name": "Sign Up",
+      "purpose": "Register new users.",
+      "priority": "critical",
+      "seoImportance": "low",
+      "sections": ["form"],
+      "components": ["auth", "form"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: register new users."
+    },
+    {
+      "id": "about",
+      "name": "About",
+      "purpose": "Build trust through story, team, and credibility.",
+      "priority": "high",
+      "seoImportance": "medium",
+      "sections": ["story", "team", "values"],
+      "components": ["navbar", "team", "stats", "cta", "footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: build trust through story, team, and credibility."
+    },
+    {
+      "id": "admin",
+      "name": "Admin",
+      "purpose": "Back-office management.",
+      "priority": "high",
+      "seoImportance": "low",
+      "sections": ["data", "management"],
+      "components": ["admin", "table", "dashboard-widget"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: back-office management."
+    },
+    {
+      "id": "contact",
+      "name": "Contact",
+      "purpose": "Capture inquiries and provide details.",
+      "priority": "high",
+      "seoImportance": "medium",
+      "sections": ["form", "details"],
+      "components": ["navbar", "contact", "form", "footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: capture inquiries and provide details."
+    },
+    {
+      "id": "login",
+      "name": "Login",
+      "purpose": "Authenticate returning users.",
+      "priority": "high",
+      "seoImportance": "low",
+      "sections": ["form"],
+      "components": ["auth", "form"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: authenticate returning users."
+    },
+    {
+      "id": "menu",
+      "name": "Menu",
+      "purpose": "Present the offering.",
+      "priority": "high",
+      "seoImportance": "high",
+      "sections": ["sections", "items"],
+      "components": ["navbar", "features", "footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: present the offering."
+    },
+    {
+      "id": "blog",
+      "name": "Blog",
+      "purpose": "Publish content for SEO and authority.",
+      "priority": "medium",
+      "seoImportance": "high",
+      "sections": ["listing", "article"],
+      "components": ["navbar", "blog-card", "footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: publish content for seo and authority."
+    },
+    {
+      "id": "gallery",
+      "name": "Gallery",
+      "purpose": "Show the space or work visually.",
+      "priority": "medium",
+      "seoImportance": "medium",
+      "sections": ["grid"],
+      "components": ["navbar", "gallery", "footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: show the space or work visually."
+    },
+    {
+      "id": "legal",
+      "name": "Legal",
+      "purpose": "Required legal and policy pages.",
+      "priority": "medium",
+      "seoImportance": "low",
+      "sections": ["policy"],
+      "components": ["footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: required legal and policy pages."
+    }
+  ]
+}

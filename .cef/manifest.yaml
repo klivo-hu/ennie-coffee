@@ -33,13 +33,14 @@ mcp:
   - chrome-devtools
   - inspo
 metadata:
-  description: Ennie Coffee (Ennie Coffee Kávéház) — premium independent coffee
-    shop in Hatvan, Hungary (Kossuth tér 10), open since 2015.
-    Hungarian-language public website with a homepage, an editorial price list
-    (Árlista) of coffees, matcha and chai lattes, milkshakes, fruit smoothies,
-    lemonades and hot chocolates, an about page, and a contact page with map and
-    opening hours; plus a secure admin panel to manage products, prices,
-    categories, images and social links.
+  description: >-
+    Ennie Coffee Kávéház — an independent cafe and coffee house in Hatvan,
+    Hungary (Kossuth tér 10), welcoming guests since 2015. A hospitality venue
+    website in Hungarian: a home page, an editorial menu page (Árlista) of
+    coffee, matcha and chai lattes, milkshakes, fruit smoothies, lemonades and
+    hot chocolate, an about page telling the cafe story, and a contact page with
+    a map, opening hours and location guidance; plus a secure admin area where
+    staff manage menu items, prices, categories, images and social links.
   framework: nextjs
   language: typescript
   packageManager: pnpm

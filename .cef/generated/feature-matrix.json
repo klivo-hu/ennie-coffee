@@ -1,0 +1,76 @@
+{
+  "features": [
+    {
+      "id": "booking",
+      "name": "Booking",
+      "category": "engagement",
+      "priority": "critical",
+      "complexity": "medium",
+      "dependencies": [],
+      "rationale": "Standard for hospitality"
+    },
+    {
+      "id": "analytics",
+      "name": "Analytics",
+      "category": "measurement",
+      "priority": "high",
+      "complexity": "low",
+      "dependencies": [],
+      "rationale": "Always measure outcomes"
+    },
+    {
+      "id": "contact-forms",
+      "name": "Contact Forms",
+      "category": "engagement",
+      "priority": "high",
+      "complexity": "low",
+      "dependencies": [],
+      "rationale": "Requested in the project brief"
+    },
+    {
+      "id": "maps",
+      "name": "Maps",
+      "category": "engagement",
+      "priority": "high",
+      "complexity": "low",
+      "dependencies": [],
+      "rationale": "Requested in the project brief"
+    },
+    {
+      "id": "admin",
+      "name": "Admin",
+      "category": "operations",
+      "priority": "medium",
+      "complexity": "high",
+      "dependencies": ["authentication"],
+      "rationale": "Requested in the project brief"
+    },
+    {
+      "id": "ai-features",
+      "name": "AI Features",
+      "category": "intelligence",
+      "priority": "medium",
+      "complexity": "high",
+      "dependencies": [],
+      "rationale": "Requested in the project brief"
+    },
+    {
+      "id": "authentication",
+      "name": "Authentication",
+      "category": "accounts",
+      "priority": "medium",
+      "complexity": "high",
+      "dependencies": [],
+      "rationale": "Required by Admin"
+    },
+    {
+      "id": "cms",
+      "name": "CMS",
+      "category": "content",
+      "priority": "low",
+      "complexity": "medium",
+      "dependencies": [],
+      "rationale": "Requested in the project brief"
+    }
+  ]
+}

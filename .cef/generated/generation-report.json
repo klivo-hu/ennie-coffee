@@ -1,0 +1,111 @@
+{
+  "projectName": "ennie-coffee",
+  "generatedAt": "2026-09-23T16:53:26.436Z",
+  "ok": true,
+  "totalFiles": 86,
+  "totalArtifacts": 102,
+  "stages": [
+    {
+      "stageId": "architecture",
+      "stageName": "Architecture Builder",
+      "status": "completed",
+      "summary": "Project architecture from blueprint (16 files).",
+      "fileCount": 16,
+      "issueCount": 0
+    },
+    {
+      "stageId": "layout",
+      "stageName": "Layout Builder",
+      "status": "completed",
+      "summary": "Shared shell and navigation (5 files).",
+      "fileCount": 5,
+      "issueCount": 0
+    },
+    {
+      "stageId": "component",
+      "stageName": "Component Builder",
+      "status": "completed",
+      "summary": "Reusable components (8), scroll motion (8 files), and the consent window (7 files).",
+      "fileCount": 23,
+      "issueCount": 0
+    },
+    {
+      "stageId": "page",
+      "stageName": "Page Builder",
+      "status": "completed",
+      "summary": "Pages composed from the blueprint (12) plus the App Router shell.",
+      "fileCount": 15,
+      "issueCount": 0
+    },
+    {
+      "stageId": "seo",
+      "stageName": "SEO Builder",
+      "status": "completed",
+      "summary": "SEO and discovery artifacts (8).",
+      "fileCount": 8,
+      "issueCount": 0
+    },
+    {
+      "stageId": "content",
+      "stageName": "Content Builder",
+      "status": "completed",
+      "summary": "Content modules (12).",
+      "fileCount": 12,
+      "issueCount": 0
+    },
+    {
+      "stageId": "asset",
+      "stageName": "Asset Builder",
+      "status": "completed",
+      "summary": "Image prompts and manifest (4 images planned).",
+      "fileCount": 2,
+      "issueCount": 0
+    },
+    {
+      "stageId": "deployment",
+      "stageName": "Deployment Builder",
+      "status": "completed",
+      "summary": "Docker deploy bundle for the hosting platform (5 files).",
+      "fileCount": 5,
+      "issueCount": 0
+    },
+    {
+      "stageId": "validation",
+      "stageName": "Validation",
+      "status": "completed",
+      "summary": "Validation passed.",
+      "fileCount": 0,
+      "issueCount": 0
+    },
+    {
+      "stageId": "review",
+      "stageName": "Review",
+      "status": "completed",
+      "summary": "Review passed.",
+      "fileCount": 0,
+      "issueCount": 0
+    },
+    {
+      "stageId": "repair",
+      "stageName": "Repair",
+      "status": "completed",
+      "summary": "Applied 0 fix(es) across 0 file(s).",
+      "fileCount": 0,
+      "issueCount": 0
+    }
+  ],
+  "artifactsByKind": {
+    "config": 16,
+    "layout": 1,
+    "component": 27,
+    "page": 15,
+    "route": 12,
+    "seo": 6,
+    "image": 5,
+    "metadata": 1,
+    "content": 12,
+    "asset": 2,
+    "docker": 5
+  },
+  "issues": []
+}

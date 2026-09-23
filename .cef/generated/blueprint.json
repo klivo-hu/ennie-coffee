@@ -1,0 +1,673 @@
+{
+  "generatedAt": "2026-09-23T16:52:55.145Z",
+  "input": {
+    "projectName": "ennie-coffee",
+    "projectType": "fullstack",
+    "description": "Ennie Coffee Kávéház — an independent cafe and coffee house in Hatvan, Hungary (Kossuth tér 10), welcoming guests since 2015. A hospitality venue website in Hungarian: a home page, an editorial menu page (Árlista) of coffee, matcha and chai lattes, milkshakes, fruit smoothies, lemonades and hot chocolate, an about page telling the cafe story, and a contact page with a map, opening hours and location guidance; plus a secure admin area where staff manage menu items, prices, categories, images and social links.",
+    "businessGoals": [],
+    "clientRequirements": ["adminPanel", "legalPages", "aiSeo", "githubActions"],
+    "framework": "nextjs",
+    "designPreset": "tech",
+    "targetCountry": "Hungary",
+    "targetLanguage": "hu",
+    "budgetLevel": "standard",
+    "timeline": "normal"
+  },
+  "industry": {
+    "id": "hospitality",
+    "name": "Hospitality",
+    "score": 6,
+    "alternatives": ["legal"]
+  },
+  "business": {
+    "industry": "hospitality",
+    "industryName": "Hospitality",
+    "businessModel": "reservation-based",
+    "objectives": ["Drive reservation", "Drive booking", "Drive contact"],
+    "trustSignals": ["reviews", "ratings", "photos", "awards"],
+    "conversions": ["reservation", "booking", "contact"],
+    "valuePropositions": ["memorable experience", "quality and care", "convenient location"],
+    "positioning": "ennie-coffee is positioned as a professional hospitality presence.",
+    "complexity": "medium"
+  },
+  "audience": {
+    "personas": [
+      {
+        "name": "The Decision Maker",
+        "description": "Evaluates hospitality options and controls the reservation.",
+        "goals": ["Confirm hospitality fit", "Compare options", "Justify the choice"],
+        "painPoints": ["Unclear value", "Hidden costs", "Weak proof"],
+        "motivations": ["memorable experience", "quality and care"]
+      },
+      {
+        "name": "The End User",
+        "description": "Uses the hospitality offering day to day.",
+        "goals": ["Accomplish the task quickly", "Understand how it works", "Get help when stuck"],
+        "painPoints": ["Friction and confusion", "Slow pages", "Inaccessible interfaces"],
+        "motivations": ["Ease of use", "Reliability", "Speed"]
+      }
+    ],
+    "userGoals": [
+      "Confirm hospitality fit",
+      "Compare options",
+      "Justify the choice",
+      "Accomplish the task quickly",
+      "Understand how it works",
+      "Get help when stuck"
+    ],
+    "painPoints": [
+      "Unclear value",
+      "Hidden costs",
+      "Weak proof",
+      "Friction and confusion",
+      "Slow pages",
+      "Inaccessible interfaces"
+    ],
+    "motivations": [
+      "memorable experience",
+      "quality and care",
+      "Ease of use",
+      "Reliability",
+      "Speed"
+    ],
+    "devices": ["mobile", "desktop", "tablet"],
+    "accessibilityExpectations": [
+      "Keyboard and screen-reader operability",
+      "Sufficient color contrast (WCAG 2.2 AA)",
+      "Respect for reduced-motion preferences"
+    ],
+    "localization": {
+      "language": "hu",
+      "country": "Hungary",
+      "requirements": ["Primary language: hu"]
+    }
+  },
+  "competitor": {
+    "typicalNavigation": ["Menu", "About", "Gallery", "Reservations", "Contact"],
+    "commonPageTypes": ["home", "about", "menu", "gallery", "reservations", "contact"],
+    "trustElements": ["reviews", "ratings", "photos", "awards"],
+    "industryFeatures": ["booking", "maps", "contact-forms", "analytics"],
+    "seoTopics": ["local SEO", "menu content", "events", "location guides"],
+    "contentOpportunities": ["menu pages", "event pages", "local guides"]
+  },
+  "pages": [
+    {
+      "id": "dashboard",
+      "name": "Dashboard",
+      "purpose": "The authenticated application home.",
+      "priority": "critical",
+      "seoImportance": "low",
+      "sections": ["metrics", "activity"],
+      "components": ["admin", "dashboard-widget", "chart", "table"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: the authenticated application home."
+    },
+    {
+      "id": "home",
+      "name": "Home",
+      "purpose": "Communicate the core value and route visitors to conversion.",
+      "priority": "critical",
+      "seoImportance": "high",
+      "sections": ["hero", "value", "proof", "features", "cta"],
+      "components": ["navbar", "hero", "features", "testimonials", "cta", "footer"],
+      "dependencies": [],
+      "rationale": "Expected for hospitality: communicate the core value and route visitors to conversion."
+    },
+    {
+      "id": "reservations",
+      "name": "Reservations",
+      "purpose": "Capture bookings.",
+      "priority": "critical",
+      "seoImportance": "medium",
+      "sections": ["form"],
+      "components": ["navbar", "contact", "form", "footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: capture bookings."
+    },
+    {
+      "id": "signup",
+      "name": "Sign Up",
+      "purpose": "Register new users.",
+      "priority": "critical",
+      "seoImportance": "low",
+      "sections": ["form"],
+      "components": ["auth", "form"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: register new users."
+    },
+    {
+      "id": "about",
+      "name": "About",
+      "purpose": "Build trust through story, team, and credibility.",
+      "priority": "high",
+      "seoImportance": "medium",
+      "sections": ["story", "team", "values"],
+      "components": ["navbar", "team", "stats", "cta", "footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: build trust through story, team, and credibility."
+    },
+    {
+      "id": "admin",
+      "name": "Admin",
+      "purpose": "Back-office management.",
+      "priority": "high",
+      "seoImportance": "low",
+      "sections": ["data", "management"],
+      "components": ["admin", "table", "dashboard-widget"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: back-office management."
+    },
+    {
+      "id": "contact",
+      "name": "Contact",
+      "purpose": "Capture inquiries and provide details.",
+      "priority": "high",
+      "seoImportance": "medium",
+      "sections": ["form", "details"],
+      "components": ["navbar", "contact", "form", "footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: capture inquiries and provide details."
+    },
+    {
+      "id": "login",
+      "name": "Login",
+      "purpose": "Authenticate returning users.",
+      "priority": "high",
+      "seoImportance": "low",
+      "sections": ["form"],
+      "components": ["auth", "form"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: authenticate returning users."
+    },
+    {
+      "id": "menu",
+      "name": "Menu",
+      "purpose": "Present the offering.",
+      "priority": "high",
+      "seoImportance": "high",
+      "sections": ["sections", "items"],
+      "components": ["navbar", "features", "footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: present the offering."
+    },
+    {
+      "id": "blog",
+      "name": "Blog",
+      "purpose": "Publish content for SEO and authority.",
+      "priority": "medium",
+      "seoImportance": "high",
+      "sections": ["listing", "article"],
+      "components": ["navbar", "blog-card", "footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: publish content for seo and authority."
+    },
+    {
+      "id": "gallery",
+      "name": "Gallery",
+      "purpose": "Show the space or work visually.",
+      "priority": "medium",
+      "seoImportance": "medium",
+      "sections": ["grid"],
+      "components": ["navbar", "gallery", "footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: show the space or work visually."
+    },
+    {
+      "id": "legal",
+      "name": "Legal",
+      "purpose": "Required legal and policy pages.",
+      "priority": "medium",
+      "seoImportance": "low",
+      "sections": ["policy"],
+      "components": ["footer"],
+      "dependencies": ["home"],
+      "rationale": "Expected for hospitality: required legal and policy pages."
+    }
+  ],
+  "features": {
+    "features": [
+      {
+        "id": "booking",
+        "name": "Booking",
+        "category": "engagement",
+        "priority": "critical",
+        "complexity": "medium",
+        "dependencies": [],
+        "rationale": "Standard for hospitality"
+      },
+      {
+        "id": "analytics",
+        "name": "Analytics",
+        "category": "measurement",
+        "priority": "high",
+        "complexity": "low",
+        "dependencies": [],
+        "rationale": "Always measure outcomes"
+      },
+      {
+        "id": "contact-forms",
+        "name": "Contact Forms",
+        "category": "engagement",
+        "priority": "high",
+        "complexity": "low",
+        "dependencies": [],
+        "rationale": "Requested in the project brief"
+      },
+      {
+        "id": "maps",
+        "name": "Maps",
+        "category": "engagement",
+        "priority": "high",
+        "complexity": "low",
+        "dependencies": [],
+        "rationale": "Requested in the project brief"
+      },
+      {
+        "id": "admin",
+        "name": "Admin",
+        "category": "operations",
+        "priority": "medium",
+        "complexity": "high",
+        "dependencies": ["authentication"],
+        "rationale": "Requested in the project brief"
+      },
+      {
+        "id": "ai-features",
+        "name": "AI Features",
+        "category": "intelligence",
+        "priority": "medium",
+        "complexity": "high",
+        "dependencies": [],
+        "rationale": "Requested in the project brief"
+      },
+      {
+        "id": "authentication",
+        "name": "Authentication",
+        "category": "accounts",
+        "priority": "medium",
+        "complexity": "high",
+        "dependencies": [],
+        "rationale": "Required by Admin"
+      },
+      {
+        "id": "cms",
+        "name": "CMS",
+        "category": "content",
+        "priority": "low",
+        "complexity": "medium",
+        "dependencies": [],
+        "rationale": "Requested in the project brief"
+      }
+    ]
+  },
+  "integrations": [
+    {
+      "id": "ai",
+      "name": "AI",
+      "category": "intelligence",
+      "provider": "Anthropic Claude",
+      "rationale": "Needed for ai-features",
+      "requiredByFeatures": ["ai-features"]
+    },
+    {
+      "id": "analytics",
+      "name": "Analytics",
+      "category": "measurement",
+      "provider": "Plausible",
+      "rationale": "Needed for analytics",
+      "requiredByFeatures": ["analytics"]
+    },
+    {
+      "id": "auth",
+      "name": "Authentication",
+      "category": "accounts",
+      "provider": "Auth provider",
+      "rationale": "Needed for authentication",
+      "requiredByFeatures": ["authentication"]
+    },
+    {
+      "id": "cms",
+      "name": "Headless CMS",
+      "category": "content",
+      "provider": "Sanity",
+      "rationale": "Needed for cms",
+      "requiredByFeatures": ["cms"]
+    },
+    {
+      "id": "maps",
+      "name": "Maps",
+      "category": "location",
+      "provider": "Google Maps",
+      "rationale": "Needed for maps",
+      "requiredByFeatures": ["maps"]
+    },
+    {
+      "id": "scheduling",
+      "name": "Scheduling",
+      "category": "engagement",
+      "provider": "Cal.com",
+      "rationale": "Needed for booking",
+      "requiredByFeatures": ["booking"]
+    }
+  ],
+  "journeys": [
+    {
+      "persona": "The Decision Maker",
+      "stages": [
+        {
+          "stage": "awareness",
+          "goal": "Discover the offering and understand the value",
+          "touchpoints": ["home", "blog", "menu"]
+        },
+        {
+          "stage": "consideration",
+          "goal": "Evaluate the fit and compare options",
+          "touchpoints": ["about"]
+        },
+        {
+          "stage": "decision",
+          "goal": "Commit — convert with confidence",
+          "touchpoints": ["contact", "signup", "reservations"]
+        },
+        {
+          "stage": "retention",
+          "goal": "Return, succeed, and stay engaged",
+          "touchpoints": ["dashboard", "blog", "admin"]
+        }
+      ]
+    },
+    {
+      "persona": "The End User",
+      "stages": [
+        {
+          "stage": "awareness",
+          "goal": "Discover the offering and understand the value",
+          "touchpoints": ["home", "blog", "menu"]
+        },
+        {
+          "stage": "consideration",
+          "goal": "Evaluate the fit and compare options",
+          "touchpoints": ["about"]
+        },
+        {
+          "stage": "decision",
+          "goal": "Commit — convert with confidence",
+          "touchpoints": ["contact", "signup", "reservations"]
+        },
+        {
+          "stage": "retention",
+          "goal": "Return, succeed, and stay engaged",
+          "touchpoints": ["dashboard", "blog", "admin"]
+        }
+      ]
+    }
+  ],
+  "content": {
+    "contentHierarchy": [
+      "Dashboard",
+      "Home",
+      "Reservations",
+      "Sign Up",
+      "About",
+      "Admin",
+      "Contact",
+      "Login",
+      "Menu"
+    ],
+    "pageSummaries": [
+      {
+        "page": "dashboard",
+        "objective": "The authenticated application home.",
+        "primaryCta": "Learn more"
+      },
+      {
+        "page": "home",
+        "objective": "Communicate the core value and route visitors to conversion.",
+        "primaryCta": "Start — reservation"
+      },
+      {
+        "page": "reservations",
+        "objective": "Capture bookings.",
+        "primaryCta": "Reserve"
+      },
+      {
+        "page": "signup",
+        "objective": "Register new users.",
+        "primaryCta": "Create account"
+      },
+      {
+        "page": "about",
+        "objective": "Build trust through story, team, and credibility.",
+        "primaryCta": "Learn more"
+      },
+      {
+        "page": "admin",
+        "objective": "Back-office management.",
+        "primaryCta": "Learn more"
+      },
+      {
+        "page": "contact",
+        "objective": "Capture inquiries and provide details.",
+        "primaryCta": "Send message"
+      },
+      {
+        "page": "login",
+        "objective": "Authenticate returning users.",
+        "primaryCta": "Learn more"
+      },
+      {
+        "page": "menu",
+        "objective": "Present the offering.",
+        "primaryCta": "Learn more"
+      },
+      {
+        "page": "blog",
+        "objective": "Publish content for SEO and authority.",
+        "primaryCta": "Learn more"
+      },
+      {
+        "page": "gallery",
+        "objective": "Show the space or work visually.",
+        "primaryCta": "Learn more"
+      },
+      {
+        "page": "legal",
+        "objective": "Required legal and policy pages.",
+        "primaryCta": "Learn more"
+      }
+    ],
+    "ctaStrategy": "One primary CTA per page, all leading toward \"reservation\".",
+    "trustStrategy": ["reviews", "ratings", "photos", "awards"],
+    "toneOfVoice": "Warm, plain, and confident — human and specific.",
+    "headlineGuidance": [
+      "Lead with the benefit, not the feature.",
+      "Be specific and concrete; avoid generic superlatives.",
+      "Keep the primary headline to one clear idea."
+    ],
+    "sectionObjectives": [
+      "Each section advances the visitor toward the conversion.",
+      "Front-load the value; prove it with real evidence.",
+      "Remove any section that does not serve a stated goal."
+    ],
+    "internalLinkingRecommendations": [
+      "Navigation exposes the top-priority pages.",
+      "Contextual links connect related content.",
+      "Every page offers a next step toward conversion."
+    ]
+  },
+  "seo": {
+    "primaryKeywords": ["ennie-coffee", "ennie", "coffee", "independent", "hospitality"],
+    "secondaryKeywords": [
+      "local SEO",
+      "menu content",
+      "events",
+      "location guides",
+      "cafe",
+      "house",
+      "hatvan",
+      "hungary"
+    ],
+    "contentClusters": [
+      {
+        "pillar": "local SEO",
+        "supporting": ["menu pages", "event pages", "local guides"]
+      },
+      {
+        "pillar": "menu content",
+        "supporting": ["menu pages", "event pages", "local guides"]
+      },
+      {
+        "pillar": "events",
+        "supporting": ["menu pages", "event pages", "local guides"]
+      }
+    ],
+    "schemaRecommendations": [
+      {
+        "page": "home",
+        "schemaType": "Organization"
+      },
+      {
+        "page": "about",
+        "schemaType": "AboutPage"
+      },
+      {
+        "page": "contact",
+        "schemaType": "ContactPage"
+      },
+      {
+        "page": "blog",
+        "schemaType": "Blog"
+      }
+    ],
+    "internalLinkingPlan": [
+      "Link the home page to every top-priority page with descriptive anchors.",
+      "Link supporting content back to its pillar page.",
+      "Cross-link related services, features, or products.",
+      "Every page links to a conversion page."
+    ],
+    "canonicalStrategy": "Each page self-canonicalizes to its absolute URL; no cross-page canonicals.",
+    "metaStrategy": "Unique title (≤60 chars) and description (≤160 chars) per page, keyword-led.",
+    "structuredDataPlan": ["Organization", "AboutPage", "ContactPage", "Blog"]
+  },
+  "performance": {
+    "renderingStrategy": "Server-first with client islands for interactive regions; stream slow data.",
+    "imageStrategy": "AVIF/WebP with explicit dimensions, responsive sizes, and a prioritized LCP image.",
+    "cachingStrategy": "Cache static shells at the edge; revalidate dynamic data with explicit TTLs.",
+    "lazyLoading": [
+      "Lazy-load below-the-fold media.",
+      "Defer non-critical scripts.",
+      "Load heavy widgets (maps, charts) on interaction or when in view."
+    ],
+    "codeSplitting": [
+      "Route-level code splitting by default.",
+      "Dynamically import heavy, rarely-used components.",
+      "Keep third-party scripts off the critical path."
+    ],
+    "coreWebVitals": {
+      "lcpMs": 2500,
+      "cls": 0.1,
+      "inpMs": 200
+    },
+    "jsBudgetKb": 150
+  },
+  "accessibility": {
+    "level": "WCAG 2.2 AA",
+    "requirements": [
+      "Semantic landmarks and one h1 per page with ordered headings.",
+      "All interactive elements keyboard operable with visible focus.",
+      "4.5:1 body contrast; meaning never by color alone.",
+      "Meaningful alt text; decorative images hidden from assistive tech.",
+      "Honor prefers-reduced-motion.",
+      "Keyboard and screen-reader operability",
+      "Sufficient color contrast (WCAG 2.2 AA)",
+      "Respect for reduced-motion preferences"
+    ],
+    "featureRequirements": [
+      "Forms: visible labels, tied inline errors, correct input types.",
+      "Maps: provide a text/address alternative to the interactive map."
+    ]
+  },
+  "legal": {
+    "requiredPages": [
+      {
+        "id": "privacy-policy",
+        "name": "Privacy Policy",
+        "required": true,
+        "reason": "Standard disclosure of data handling."
+      },
+      {
+        "id": "terms",
+        "name": "Terms of Service",
+        "required": true,
+        "reason": "Governs use of the site and services."
+      },
+      {
+        "id": "cookie-policy",
+        "name": "Cookie Policy",
+        "required": true,
+        "reason": "Required where cookies or tracking are used."
+      }
+    ],
+    "gdprConsiderations": ["Follow applicable local data-protection law."],
+    "disclaimer": "Generated legal text is a draft only. It MUST be reviewed by a qualified legal professional before publication; CEF does not provide legal advice."
+  },
+  "analytics": {
+    "tools": ["Plausible or GA4 (privacy-configured)"],
+    "events": ["page_view", "reservation", "booking", "contact", "cta_click", "form_submit"],
+    "kpis": [
+      "Conversion rate on the primary CTA",
+      "Bounce rate on key landing pages",
+      "Core Web Vitals field data",
+      "reservation completions",
+      "booking completions",
+      "contact completions"
+    ],
+    "consentRequirements": ["Honor Do-Not-Track; disclose analytics in the privacy policy."]
+  },
+  "recommendations": [
+    {
+      "id": "critical-first",
+      "priority": "critical",
+      "title": "Build the critical path first",
+      "detail": "Ship Dashboard, Home, Reservations, Sign Up before secondary pages."
+    },
+    {
+      "id": "accessibility-first",
+      "priority": "high",
+      "title": "Build accessible components from the first line",
+      "detail": "Meeting WCAG 2.2 AA up front is far cheaper than retrofitting it."
+    },
+    {
+      "id": "lead-value",
+      "priority": "high",
+      "title": "Lead with the strongest value proposition",
+      "detail": "Foreground \"memorable experience\" on the home hero."
+    },
+    {
+      "id": "measure-early",
+      "priority": "medium",
+      "title": "Instrument analytics from day one",
+      "detail": "Track reservation to learn what works."
+    },
+    {
+      "id": "sequence-complex",
+      "priority": "medium",
+      "title": "Sequence high-complexity features",
+      "detail": "Integrate Admin, AI Features, Authentication incrementally."
+    }
+  ],
+  "risks": [
+    {
+      "id": "feature-load",
+      "description": "3 high-complexity features increase integration risk.",
+      "severity": "warning",
+      "mitigation": "Sequence high-complexity features across milestones; integrate incrementally."
+    },
+    {
+      "id": "legal-review",
+      "description": "3 legal pages require professional review before launch.",
+      "severity": "warning",
+      "mitigation": "Generated legal text is a draft only. It MUST be reviewed by a qualified legal professional before publication; CEF does not provide legal advice."
+    }
+  ]
+}

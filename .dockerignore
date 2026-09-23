@@ -1,0 +1,25 @@
+# Never in the build context: secrets, local state, and VCS data.
+.env
+.env.*
+!.env.example
+.git
+.github
+node_modules
+.next
+out
+coverage
+*.log
+*.tsbuildinfo
+
+# Tooling and documentation the image does not need.
+.cef
+.claude
+docs
+tests
+Dockerfile
+.dockerignore
+# Compose files are not needed inside the image, and keeping them out means editing a stack never
+# invalidates a production build layer.
+docker-compose.yml
+docker-compose.*.yml
+docker

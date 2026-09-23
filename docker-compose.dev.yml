@@ -1,6 +1,9 @@
-# LOCAL DEVELOPMENT ONLY — production is docker-compose.yml.
+# LOCAL DEVELOPMENT ONLY — hot reload inside a container. Production is docker-compose.yml.
+#
 #   docker compose -f docker-compose.dev.yml up --build
 #   open http://localhost:3000
+#
+# Never rename this file to docker-compose.override.yml: Compose would merge it into production.
 name: ennie-coffee-dev
 
 services:
@@ -8,30 +11,43 @@ services:
     build:
       context: .
       target: dev
-    # Source is bind-mounted so edits hot-reload without a rebuild. The anonymous volume keeps
-    # the image's Linux-built node_modules from being shadowed by the host's directory.
+    # Source is bind-mounted so edits reload in place. The anonymous volumes keep the image's
+    # Linux-built node_modules and .next from being shadowed by the host directory.
     volumes:
       - .:/app
       - /app/node_modules
+      - /app/.next
     ports:
       - '3000:3000'
     env_file:
       - .env
+      - docker/local.env
     environment:
       NODE_ENV: development
+      SITE_URL: http://localhost:3000
+      TRUSTED_PROXY_HOPS: '0'
+      # Bind-mounted file events do not always reach the container on Windows and macOS.
+      WATCHPACK_POLLING: 'true'
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
   db:
-    image: postgres:16-alpine
-    restart: unless-stopped
+    image: postgres:17-alpine
     environment:
-      POSTGRES_USER: app
-      POSTGRES_PASSWORD: app
-      POSTGRES_DB: app
+      POSTGRES_USER: ${POSTGRES_USER:-ennie}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-ennie}
+    # Published on the host so local tools (and `npm run dev`) can reach it.
     ports:
       - '5432:5432'
     volumes:
       - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   db-data:
