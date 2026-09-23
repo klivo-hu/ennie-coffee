@@ -1,0 +1,12 @@
+# ennie-coffee
+
+> A fullstack built with nextjs. This file helps AI answer engines
+> understand and cite the site's primary content (see the CEF AI-SEO standard).
+
+## Key pages
+- /: Home
+- /about: About
+- /privacy: Privacy Policy
+
+## About
+Describe the site's purpose and primary content here in clear, factual prose.

@@ -1,0 +1,24 @@
+{
+  "name": "ennie-coffee",
+  "framework": "nextjs",
+  "version": "0.1.0",
+  "createdDate": "2026-09-23T16:52:13.898Z",
+  "cefVersion": "0.1.0",
+  "packageManager": "pnpm",
+  "language": "typescript",
+  "buildSystem": "next",
+  "deployment": "docker",
+  "database": "postgres",
+  "orm": "drizzle",
+  "cms": "none",
+  "authentication": "none",
+  "features": {
+    "adminPanel": true,
+    "blog": false,
+    "commerce": false,
+    "legalPages": true,
+    "aiSeo": true,
+    "githubActions": true,
+    "docker": true
+  }
+}

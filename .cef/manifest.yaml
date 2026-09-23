@@ -1,0 +1,96 @@
+frameworkVersion: 2
+project:
+  name: ennie-coffee
+  type: fullstack
+  created: 2026-09-23T16:52:13.898Z
+  cefVersion: 0.1.0
+engines:
+  - accessibility
+  - ai-seo
+  - architecture
+  - components
+  - core
+  - deployment
+  - design
+  - docker
+  - experience
+  - legal
+  - motion
+  - performance
+  - platform
+  - security
+  - seo
+  - validation
+skills:
+  - animate
+  - emil-design-eng
+  - frontend-design
+  - impeccable
+  - taste
+  - uiux-pro-max
+  - ux-designer
+mcp:
+  - chrome-devtools
+  - inspo
+metadata:
+  description: Ennie Coffee (Ennie Coffee Kávéház) — premium independent coffee
+    shop in Hatvan, Hungary (Kossuth tér 10), open since 2015.
+    Hungarian-language public website with a homepage, an editorial price list
+    (Árlista) of coffees, matcha and chai lattes, milkshakes, fruit smoothies,
+    lemonades and hot chocolates, an about page, and a contact page with map and
+    opening hours; plus a secure admin panel to manage products, prices,
+    categories, images and social links.
+  framework: nextjs
+  language: typescript
+  packageManager: pnpm
+  styling: tailwind
+  uiLibrary: shadcn
+  animation: gsap
+  database: postgres
+  orm: drizzle
+  authentication: none
+  cms: none
+docker:
+  enabled: true
+  port: 3000
+features:
+  adminPanel: true
+  blog: false
+  commerce: false
+  legalPages: true
+  aiSeo: true
+  githubActions: true
+deployment:
+  target: docker
+languages:
+  primary: hu
+  additional: []
+  country: Hungary
+generatedFiles:
+  - .cef/consent.json
+  - .cef/design/impeccable.md
+  - .cef/design/scroll-motion.md
+  - .cef/manifest.yaml
+  - .cef/memory.md
+  - .cef/project.json
+  - .cef/runtime.json
+  - .editorconfig
+  - .env
+  - .env.example
+  - .github/workflows/ci.yml
+  - .gitignore
+  - .prettierignore
+  - .prettierrc.json
+  - CLAUDE.md
+  - Dockerfile
+  - README.md
+  - content/legal/adatkezelesi-tajekoztato.md
+  - content/legal/aszf.md
+  - content/legal/cookie-tajekoztato.md
+  - content/legal/impresszum.md
+  - docker-compose.dev.yml
+  - docker-compose.yml
+  - eslint.config.js
+  - package.json
+  - public/llms.txt
+  - tsconfig.json

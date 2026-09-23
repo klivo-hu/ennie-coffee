@@ -1,0 +1,99 @@
+{
+  "frameworkVersion": 2,
+  "enabledModules": [
+    "accessibility",
+    "ai-seo",
+    "architecture",
+    "components",
+    "core",
+    "deployment",
+    "design",
+    "docker",
+    "experience",
+    "legal",
+    "motion",
+    "performance",
+    "platform",
+    "security",
+    "seo",
+    "validation"
+  ],
+  "plugins": {
+    "accessibility": {
+      "enabled": true
+    },
+    "ai-seo": {
+      "enabled": true
+    },
+    "architecture": {
+      "enabled": true
+    },
+    "components": {
+      "enabled": true
+    },
+    "core": {
+      "enabled": true
+    },
+    "deployment": {
+      "enabled": true
+    },
+    "design": {
+      "enabled": true
+    },
+    "docker": {
+      "enabled": true
+    },
+    "experience": {
+      "enabled": true
+    },
+    "legal": {
+      "enabled": true
+    },
+    "motion": {
+      "enabled": true
+    },
+    "performance": {
+      "enabled": true
+    },
+    "platform": {
+      "enabled": true
+    },
+    "security": {
+      "enabled": true
+    },
+    "seo": {
+      "enabled": true
+    },
+    "validation": {
+      "enabled": true
+    }
+  },
+  "executionOrder": [
+    "core",
+    "architecture",
+    "platform",
+    "design",
+    "experience",
+    "components",
+    "motion",
+    "seo",
+    "ai-seo",
+    "accessibility",
+    "performance",
+    "security",
+    "legal",
+    "docker",
+    "deployment",
+    "validation"
+  ],
+  "validationPipeline": [
+    "build",
+    "unit",
+    "integration",
+    "accessibility",
+    "performance",
+    "seo",
+    "security",
+    "docker"
+  ]
+}

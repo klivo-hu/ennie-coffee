@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+.pnp/
+.yarn/
+
+# Build output
+dist/
+build/
+.next/
+.astro/
+out/
+*.tsbuildinfo
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Logs & caches
+logs/
+*.log
+.cache/
+.eslintcache
+coverage/
+
+# OS & editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

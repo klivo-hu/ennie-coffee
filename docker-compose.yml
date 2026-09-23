@@ -1,0 +1,49 @@
+# PRODUCTION — the Klivo Docker hosting platform runs this file verbatim.
+# Local development is docker-compose.dev.yml; never move a local convenience into this file,
+# and never add a docker-compose.override.yml (Compose merges it here automatically, so it would
+# reach production past the platform's security validation of this file).
+#
+# The container name and network embed the client slug "ennie-coffee" — they must match the client
+# created in the panel.
+services:
+  hosting_ennie-coffee_web:
+    build: .
+    container_name: hosting_ennie-coffee_web
+    restart: unless-stopped
+    env_file:
+      - .env
+    expose:
+      - '80'
+    networks:
+      - client_ennie-coffee_net
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: app
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - client_ennie-coffee_net
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U app']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+networks:
+  client_ennie-coffee_net:
+    external: true
+
+volumes:
+  db-data:
