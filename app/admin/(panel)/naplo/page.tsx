@@ -29,6 +29,11 @@ const ACTION_LABEL: Record<string, string> = {
   'social.updated': 'Link módosítva',
   'social.deleted': 'Link törölve',
   'social.reordered': 'Linkek sorrendje',
+  'seasonal.updated': 'Szezonális szakasz módosítva',
+  'seasonal.item_created': 'Szezonális tétel létrehozva',
+  'seasonal.item_updated': 'Szezonális tétel módosítva',
+  'seasonal.item_deleted': 'Szezonális tétel törölve',
+  'seasonal.item_reordered': 'Szezonális tételek sorrendje',
   'media.uploaded': 'Kép feltöltve',
 };
 

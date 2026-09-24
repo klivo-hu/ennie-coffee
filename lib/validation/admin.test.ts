@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { productCreateSchema, socialCreateSchema, socialUrlProblem } from './admin';
+import {
+  productCreateSchema,
+  seasonalItemCreateSchema,
+  seasonalSectionUpdateSchema,
+  socialCreateSchema,
+  socialUrlProblem,
+} from './admin';
 
 const CATEGORY = '4b1c3d0e-8f2a-4c6b-9d7e-1a2b3c4d5e6f';
 
@@ -79,5 +85,42 @@ describe('social links', () => {
       url: 'https://facebook.com/x',
     });
     expect(result.success).toBe(false);
+  });
+});
+
+describe('seasonal showcase', () => {
+  it('accepts an item and normalizes its optional text', () => {
+    const parsed = seasonalItemCreateSchema.parse({
+      name: '  Sütőtökös latte ',
+      description: '',
+      ingredients: ['eszpresszó', ' zabtej '],
+      prices: [{ label: '', amountHuf: 1690 }],
+    });
+    expect(parsed).toMatchObject({
+      name: 'Sütőtökös latte',
+      description: null,
+      qualifier: 'exact',
+      isVisible: true,
+    });
+    expect(parsed.ingredients).toEqual(['eszpresszó', 'zabtej']);
+  });
+
+  it('refuses more ingredients than the section shows', () => {
+    const result = seasonalItemCreateSchema.safeParse({
+      name: 'X',
+      ingredients: Array.from({ length: 11 }, (_, index) => `összetevő ${index}`),
+      prices: [{ amountHuf: 100 }],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('leaves untouched section fields undefined instead of overwriting them', () => {
+    const parsed = seasonalSectionUpdateSchema.parse({ isEnabled: true });
+    expect(parsed).toEqual({ isEnabled: true });
+  });
+
+  it('only accepts a layout the site can render', () => {
+    expect(seasonalSectionUpdateSchema.safeParse({ homeStyle: 'arch' }).success).toBe(true);
+    expect(seasonalSectionUpdateSchema.safeParse({ homeStyle: 'carousel' }).success).toBe(false);
   });
 });

@@ -1,3 +1,5 @@
+import type { SeasonalStyle } from '@/lib/seasonal/styles';
+
 /** Shapes the admin API returns. Shared by the route handlers and the admin UI. */
 
 export interface AdminImage {
@@ -54,4 +56,26 @@ export interface AdminAuditEntry {
   readonly action: string;
   readonly entity: string | null;
   readonly ip: string | null;
+}
+
+export interface AdminSeasonalItem {
+  readonly id: string;
+  readonly name: string;
+  readonly description: string | null;
+  readonly ingredients: readonly string[];
+  readonly qualifier: 'exact' | 'from';
+  readonly prices: readonly AdminPrice[];
+  readonly isVisible: boolean;
+  readonly image: AdminImage | null;
+}
+
+export interface AdminSeasonalSection {
+  readonly isEnabled: boolean;
+  readonly title: string;
+  readonly lead: string | null;
+  readonly note: string | null;
+  readonly homeStyle: SeasonalStyle;
+  readonly listStyle: SeasonalStyle;
+  /** In showing order; the admin list reorders this array. */
+  readonly items: readonly AdminSeasonalItem[];
 }

@@ -39,7 +39,12 @@ async function load(): Promise<SiteContent> {
     // An empty store (boot still seeding) renders the published menu rather than nothing.
     return content.menu.length > 0
       ? content
-      : { ...fallbackContent(), social: content.social, ordering: content.ordering };
+      : {
+          ...fallbackContent(),
+          social: content.social,
+          ordering: content.ordering,
+          seasonal: content.seasonal,
+        };
   } catch (error) {
     logger.error('content.load_failed', { error: String(error) });
     return fallbackContent();

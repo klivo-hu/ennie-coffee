@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import kavek from '@/assets/menu/kavek.jpg';
-import { MenuShowcase } from '@/components/menu/menu-showcase';
+import { MenuShowcase, toneAfterMenu } from '@/components/menu/menu-showcase';
 import { OrderCta } from '@/components/sections/order-cta';
 import { PageHero } from '@/components/sections/page-hero';
 import { JsonLd } from '@/components/seo/json-ld';
@@ -20,7 +20,8 @@ export const metadata: Metadata = {
 
 export default async function PriceListPage() {
   const info = business();
-  const { menu, ordering } = await getSiteContent();
+  const { menu, ordering, seasonal } = await getSiteContent();
+  const hasMenu = menu.length > 0 || seasonal !== null;
 
   return (
     <>
@@ -36,8 +37,8 @@ export default async function PriceListPage() {
         </p>
       </PageHero>
 
-      {menu.length > 0 ? (
-        <MenuShowcase menu={menu} />
+      {hasMenu ? (
+        <MenuShowcase menu={menu} seasonal={seasonal} />
       ) : (
         <StatusMessage
           title="Az árlista épp frissül."
@@ -53,9 +54,13 @@ export default async function PriceListPage() {
         </StatusMessage>
       )}
 
-      <OrderCta ordering={ordering} tone="paper" wave={{ variant: 'flowing' }} />
+      <OrderCta
+        ordering={ordering}
+        tone={hasMenu ? toneAfterMenu(menu.length, seasonal !== null) : 'paper'}
+        wave={{ variant: 'flowing' }}
+      />
 
-      {menu.length > 0 ? <JsonLd data={menuJsonLd(info, menu)} /> : null}
+      {hasMenu ? <JsonLd data={menuJsonLd(info, menu, seasonal)} /> : null}
       <JsonLd
         data={breadcrumbJsonLd([
           { name: 'Főoldal', path: '/' },

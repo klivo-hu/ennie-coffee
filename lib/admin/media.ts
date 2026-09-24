@@ -1,7 +1,7 @@
 import 'server-only';
 import { logger } from '@/lib/log';
 import { deleteMedia, mediaVariantUrl } from '@/lib/media/store';
-import { categoriesStore, mediaStore, productsStore } from '@/lib/store/collections';
+import { categoriesStore, mediaStore, productsStore, seasonalStore } from '@/lib/store/collections';
 import type { AdminImage } from './types';
 
 /** Preview (smallest WebP) for admin lists. */
@@ -34,18 +34,22 @@ export async function mediaExists(id: string): Promise<boolean> {
 
 /**
  * Deletes a replaced image once nothing references it any more, so the store does not grow with
- * every re-upload. Images are only ever referenced by categories and products.
+ * every re-upload. Images are only ever referenced by categories, products, and the items of the
+ * seasonal showcase — every holder must be consulted here, or a shared image would be deleted
+ * out from under one of them.
  */
 export async function deleteIfOrphaned(id: string | null | undefined): Promise<void> {
   if (!id) return;
   try {
-    const [categories, products] = await Promise.all([
+    const [categories, products, seasonal] = await Promise.all([
       categoriesStore.read(),
       productsStore.read(),
+      seasonalStore.read(),
     ]);
     const referenced =
       categories.some((category) => category.imageId === id) ||
-      products.some((product) => product.imageId === id);
+      products.some((product) => product.imageId === id) ||
+      seasonal.some((section) => section.items.some((item) => item.imageId === id));
     if (referenced) return;
     await deleteMedia(id);
   } catch (error) {

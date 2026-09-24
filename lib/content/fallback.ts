@@ -58,6 +58,8 @@ export function fallbackContent(): SiteContent {
     menu,
     social: links.filter((link) => !isOrderingPlatform(link.platform)),
     ordering: links.filter((link) => isOrderingPlatform(link.platform)),
+    // The showcase is the owner's own editing, never seeded: with no store there is nothing to show.
+    seasonal: null,
     source: 'fallback',
   };
 }

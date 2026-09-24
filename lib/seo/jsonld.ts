@@ -1,7 +1,7 @@
 import { schemaOpeningHours } from '@/lib/business/opening-hours';
 import type { BusinessInfo } from '@/lib/config/business';
 import { formatForint } from '@/lib/menu/format';
-import type { MenuCategory, SocialLink } from '@/lib/menu/types';
+import type { MenuCategory, SeasonalSection, SocialLink } from '@/lib/menu/types';
 import { absoluteUrl } from '@/lib/site-url';
 
 /**
@@ -52,33 +52,64 @@ export function cafeJsonLd(info: BusinessInfo, social: readonly SocialLink[]) {
   };
 }
 
-export function menuJsonLd(info: BusinessInfo, menu: readonly MenuCategory[]) {
+/** A priced line — a menu product or a seasonal item; both carry the same facts. */
+interface PricedItem {
+  readonly name: string;
+  readonly description: string | null;
+  readonly qualifier: 'exact' | 'from';
+  readonly prices: readonly { readonly label: string | null; readonly amountHuf: number }[];
+}
+
+function menuItemJsonLd(item: PricedItem) {
+  return {
+    '@type': 'MenuItem',
+    name: item.name,
+    ...(item.description ? { description: item.description } : {}),
+    offers: item.prices.map((price) => ({
+      '@type': 'Offer',
+      price: price.amountHuf,
+      priceCurrency: 'HUF',
+      ...(price.label ? { name: price.label } : {}),
+      ...(item.qualifier === 'from'
+        ? {
+            description: `${formatForint(price.amountHuf)}-tól, a választott kiszereléstől függően`,
+          }
+        : {}),
+    })),
+  };
+}
+
+/** The seasonal showcase is a section of the menu like any other, and leads it when it is on. */
+export function menuJsonLd(
+  info: BusinessInfo,
+  menu: readonly MenuCategory[],
+  seasonal: SeasonalSection | null = null,
+) {
+  const sections: readonly {
+    name: string;
+    description: string | null;
+    items: readonly PricedItem[];
+  }[] = [
+    ...(seasonal
+      ? [{ name: seasonal.title, description: seasonal.lead, items: seasonal.items }]
+      : []),
+    ...menu.map((category) => ({
+      name: category.name,
+      description: category.description,
+      items: category.products,
+    })),
+  ];
   return {
     '@context': 'https://schema.org',
     '@type': 'Menu',
     name: `${info.name} árlista`,
     url: absoluteUrl('/arlista'),
     inLanguage: 'hu',
-    hasMenuSection: menu.map((category) => ({
+    hasMenuSection: sections.map((section) => ({
       '@type': 'MenuSection',
-      name: category.name,
-      ...(category.description ? { description: category.description } : {}),
-      hasMenuItem: category.products.map((product) => ({
-        '@type': 'MenuItem',
-        name: product.name,
-        ...(product.description ? { description: product.description } : {}),
-        offers: product.prices.map((price) => ({
-          '@type': 'Offer',
-          price: price.amountHuf,
-          priceCurrency: 'HUF',
-          ...(price.label ? { name: price.label } : {}),
-          ...(product.qualifier === 'from'
-            ? {
-                description: `${formatForint(price.amountHuf)}-tól, a választott kiszereléstől függően`,
-              }
-            : {}),
-        })),
-      })),
+      name: section.name,
+      ...(section.description ? { description: section.description } : {}),
+      hasMenuItem: section.items.map(menuItemJsonLd),
     })),
   };
 }

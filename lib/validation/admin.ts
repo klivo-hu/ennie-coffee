@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MAX_SEASONAL_INGREDIENTS, SEASONAL_STYLES } from '@/lib/seasonal/styles';
 import { PLATFORM_LABEL, SOCIAL_PLATFORMS, type SocialPlatformId } from '@/lib/social/platforms';
 
 /**
@@ -108,6 +109,55 @@ export const categoryUpdateSchema = z
 export const reorderSchema = z.object({
   ids: z.array(z.uuid()).min(1).max(500),
 });
+
+/* ------------------------------------------------------------------ seasonal showcase */
+
+/**
+ * Ingredients arrive as a list because that is how they are shown — one chip each. The admin form
+ * splits what the owner typed on commas; empty entries are dropped there, and refused here.
+ */
+const ingredientsSchema = z
+  .array(requiredText(48, 'Összetevő'))
+  .max(MAX_SEASONAL_INGREDIENTS, `Legfeljebb ${MAX_SEASONAL_INGREDIENTS} összetevő adható meg.`);
+
+export const seasonalSectionUpdateSchema = z
+  .object({
+    isEnabled: z.boolean(),
+    title: requiredText(60, 'Cím'),
+    lead: optionalText(400, 'Bevezető'),
+    note: optionalText(300, 'Megjegyzés'),
+    homeStyle: z.enum(SEASONAL_STYLES, 'Válassz elrendezést.'),
+    listStyle: z.enum(SEASONAL_STYLES, 'Válassz elrendezést.'),
+  })
+  .partial()
+  .refine((value) => Object.keys(value).length > 0, 'Nincs módosítandó mező.');
+
+export const seasonalItemCreateSchema = z.object({
+  name: requiredText(80, 'Név'),
+  description: optionalText(600, 'Leírás'),
+  ingredients: ingredientsSchema.default([]),
+  qualifier: z.enum(['exact', 'from']).default('exact'),
+  prices: pricesSchema,
+  imageId: imageIdSchema,
+  isVisible: z.boolean().default(true),
+});
+
+/**
+ * Declared field by field rather than as a `.partial()` of the create schema: the defaults there
+ * would turn an omitted field into an overwrite instead of leaving the stored value alone.
+ */
+export const seasonalItemUpdateSchema = z
+  .object({
+    name: requiredText(80, 'Név'),
+    description: optionalText(600, 'Leírás'),
+    ingredients: ingredientsSchema,
+    qualifier: z.enum(['exact', 'from']),
+    prices: pricesSchema,
+    imageId: imageIdSchema,
+    isVisible: z.boolean(),
+  })
+  .partial()
+  .refine((value) => Object.keys(value).length > 0, 'Nincs módosítandó mező.');
 
 /* ------------------------------------------------------------------ social */
 

@@ -9,6 +9,7 @@ const NAV: readonly AdminNavItem[] = [
   { href: '/admin', label: 'Áttekintés' },
   { href: '/admin/termekek', label: 'Termékek' },
   { href: '/admin/kategoriak', label: 'Kategóriák' },
+  { href: '/admin/szezonalis', label: 'Szezonális' },
   { href: '/admin/kozossegi', label: 'Linkek' },
   { href: '/admin/fiok', label: 'Fiók és biztonság' },
 ];

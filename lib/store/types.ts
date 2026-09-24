@@ -1,3 +1,4 @@
+import type { SeasonalStyle } from '@/lib/seasonal/styles';
 import type { SocialPlatformId } from '@/lib/social/platforms';
 
 /**
@@ -152,4 +153,43 @@ export interface AuditRecord {
   readonly entityId: string | null;
   readonly ipAddress: string | null;
   readonly detail: Record<string, unknown> | null;
+}
+
+/* ------------------------------------------------------------------ seasonal showcase */
+
+export interface SeasonalItemRecord {
+  readonly id: string;
+  readonly name: string;
+  /** A sentence or two about the drink — what it tastes like, why it is on right now. */
+  readonly description: string | null;
+  /** Ingredients as separate entries, shown as a row of chips in the order they were typed. */
+  readonly ingredients: readonly string[];
+  readonly priceQualifier: PriceQualifier;
+  readonly prices: readonly PriceRecord[];
+  readonly imageId: string | null;
+  readonly isVisible: boolean;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
+/**
+ * The seasonal showcase: one editable section that the home page and the price list both render.
+ *
+ * Stored as a single record (`SEASONAL_SECTION_ID`) in its own file, with the items nested inside
+ * it the way a product's prices are nested — an item has no meaning outside the section, its
+ * order is the order of this array, and one save writes the whole section atomically.
+ */
+export interface SeasonalSectionRecord {
+  readonly id: string;
+  /** Off by default: the section appears on the public site only when this is on. */
+  readonly isEnabled: boolean;
+  readonly title: string;
+  readonly lead: string | null;
+  readonly note: string | null;
+  /** Layout on the home page and on the price list — chosen separately. */
+  readonly homeStyle: SeasonalStyle;
+  readonly listStyle: SeasonalStyle;
+  readonly items: readonly SeasonalItemRecord[];
+  readonly createdAt: string;
+  readonly updatedAt: string;
 }

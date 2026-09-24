@@ -27,6 +27,18 @@ Primary language: hu. Country: Hungary.
   instead of eventually consistent.
 - Enabled engines: accessibility, ai-seo, architecture, components, core, deployment, design, docker, experience, legal, motion, performance, platform, security, seo, validation.
 
+- Seasonal showcase (2026-09-24). One optional, owner-edited section — "Szezonális újdonságok" by
+  default, the title is editable — rendered on the home page (third section, after the intro) and
+  as the price list's first chapter. It lives in its own file, `seasonal.json`, as a single record
+  with its items nested inside it (`lib/seasonal/record.ts` owns that singleton); items carry a
+  name, description, ingredient list, prices and one photograph. The owner picks the layout per
+  page from three (`lib/seasonal/styles.ts`: magazin / íves / kártyás), so the section can be
+  restyled without a deploy. `components/sections/seasonal-showcase.tsx` renders both placements:
+  patches on the home page only (the Árlista carries no patches but its hero), and on the price
+  list the section takes the first slot in `MenuShowcase`'s tone rhythm — which is why the order
+  CTA now asks `toneAfterMenu()` for its surface instead of assuming `paper`. Without the section
+  the pages render exactly as before.
+
 ## User requirements
 
 - Project type: fullstack.

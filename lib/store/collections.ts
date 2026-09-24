@@ -7,6 +7,7 @@ import type {
   CategoryRecord,
   MediaRecord,
   ProductRecord,
+  SeasonalSectionRecord,
   SocialLinkRecord,
 } from './types';
 
@@ -30,3 +31,9 @@ export const mediaStore = createCollection<MediaRecord>('media.json');
 export const adminUsersStore = createCollection<AdminUserRecord>('admins.json');
 export const sessionsStore = createCollection<AdminSessionRecord>('sessions.json');
 export const auditStore = createCollection<AuditRecord>('audit.json');
+
+/**
+ * The seasonal showcase — a single record with its items nested inside it, in its own file so a
+ * menu edit and a showcase edit never rewrite each other. See `lib/seasonal/record.ts`.
+ */
+export const seasonalStore = createCollection<SeasonalSectionRecord>('seasonal.json');
