@@ -26,8 +26,9 @@ export default async function AccountPage({
         mfaRequired: serverEnv().ADMIN_MFA_REQUIRED,
         mfaComplete,
         recoveryCodesRemaining: user.mfaRecoveryCodes.length,
-        lastLoginAt: user.lastLoginAt?.toISOString() ?? null,
-        passwordChangedAt: user.passwordChangedAt.toISOString(),
+        // Already ISO-8601 strings in the store, so they pass straight through.
+        lastLoginAt: user.lastLoginAt,
+        passwordChangedAt: user.passwordChangedAt,
       }}
     />
   );
