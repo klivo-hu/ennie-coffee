@@ -1,35 +1,20 @@
 import { NextResponse } from 'next/server';
-import { hasDatabase } from '@/lib/config/env';
-import { bootState } from '@/lib/db/boot';
-import { connection } from '@/lib/db/client';
+import { bootState } from '@/lib/store/boot';
 
 export const dynamic = 'force-dynamic';
 
-const PING_TIMEOUT_MS = 1_000;
-
 /**
- * Readiness: may this instance receive traffic? The load balancer polls it (LB-06).
+ * Readiness: is this instance serving? The platform's health probes and any uptime monitor read
+ * it, and it is the one endpoint that reports how boot went.
  *
- * The instance is ready once its server has started. The database state is reported but does not
- * gate readiness on its own: it is shared by every instance, so evicting all of them when it
- * blips would turn "admin unavailable" into "site down" — while the public pages keep serving the
- * published menu from the fallback. See docs/architecture.md.
+ * A failed boot — a data directory that cannot be written — is reported but does not make the
+ * instance unready: the public pages still render the published menu from the seed data, and
+ * taking the container out of rotation would turn "the admin is unavailable" into "the site is
+ * down". The `store` field is what tells an operator which of the two is happening.
  */
-export async function GET() {
-  let database: 'disabled' | 'up' | 'down' = 'disabled';
-  if (hasDatabase()) {
-    try {
-      await Promise.race([
-        connection().sql`select 1`,
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), PING_TIMEOUT_MS)),
-      ]);
-      database = 'up';
-    } catch {
-      database = 'down';
-    }
-  }
+export function GET() {
   return NextResponse.json(
-    { status: 'ready', database, boot: bootState() },
+    { status: 'ready', store: bootState() },
     { headers: { 'Cache-Control': 'no-store' } },
   );
 }

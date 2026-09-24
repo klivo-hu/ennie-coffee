@@ -3,7 +3,6 @@ import { ok, readJson, route } from '@/lib/api/route';
 import { reorderProducts } from '@/lib/admin/products';
 import { audit } from '@/lib/audit';
 import { invalidateContent } from '@/lib/content/cache';
-import { connection } from '@/lib/db/client';
 import { reorderSchema } from '@/lib/validation/admin';
 
 export const dynamic = 'force-dynamic';
@@ -14,8 +13,8 @@ export const POST = route(
   { rateLimit: { tier: 'mutation', scope: 'products-reorder' }, permission: 'content:write' },
   async ({ request, principal, client }) => {
     const { categoryId, ids } = await readJson(request, schema);
-    await reorderProducts(connection().db, categoryId, ids);
-    await invalidateContent();
+    await reorderProducts(categoryId, ids);
+    invalidateContent();
     await audit({
       actorId: principal!.user.id,
       action: 'product.reordered',

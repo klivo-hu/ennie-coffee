@@ -3,93 +3,88 @@
 # (hot reload). Never add a docker-compose.override.yml: Compose merges it into every bare
 # `docker compose up`, including the platform's deploy, past its validation of this file.
 #
-# Topology (docs/architecture.md):
-#   Traefik ──▶ hosting_ennie-coffee_web (HAProxy, least-connections) ──▶ app × 2 ──▶ db
+# Topology:
 #
-# The container name and network embed the client slug "ennie-coffee"; they must match the client
-# created in the panel. Every service caps its logs, restarts unless stopped, has resource limits,
-# and joins only the client's own network.
+#   Traefik ──▶ hosting_ennie-coffee_web  (one Next.js container, port 80)
+#                        │
+#                        └── ennie-data volume at /app/data
+#
+# One service, on purpose. The whole dataset is a menu, a few links, one administrator and the
+# sessions and audit entries those produce — a few hundred records that live in JSON files under
+# /app/data (see lib/store/json-store.ts). A database container would be a second thing to run,
+# patch, back up and fail independently, for data that fits in a single atomic file write. One
+# container also means the content cache and the rate-limit counters are exact rather than
+# eventually consistent, because one process owns every read and every write.
+#
+# Three names have to match and are the usual cause of a 502 when they do not:
+#   - the container name embeds the client slug "ennie-coffee" — Traefik routes by this name;
+#   - the network is the client's own, created by the platform before the deploy;
+#   - the panel's container port must be 80, which is what this container listens on.
 
 services:
-  # First service on purpose: a review preview copies the first service alone (build, image,
-  # environment, expose, command). Without a database the app serves the published menu from its
-  # seed data, so a preview renders correctly from this single container (KH-13).
   app:
     build:
       context: .
       target: runner
-    restart: unless-stopped
-    env_file:
-      - .env
-    environment:
-      NODE_ENV: production
-      # Traefik + HAProxy sit in front of every instance.
-      TRUSTED_PROXY_HOPS: '2'
-    expose:
-      - '80'
-    networks:
-      - client_ennie-coffee_net
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      # Stateless instances (all shared state is in PostgreSQL); raise to scale out.
-      replicas: 2
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 768M
-    stop_grace_period: 20s
-    logging:
-      driver: json-file
-      options:
-        max-size: '10m'
-        max-file: '3'
-
-  hosting_ennie-coffee_web:
-    build: ./docker/haproxy
+    # Traefik routes to hosting_{client-slug}_web. A mismatch here is a 502 with no other symptom.
     container_name: hosting_ennie-coffee_web
     restart: unless-stopped
+
+    # Written by the panel under Sites → Environment. Holds SITE_URL, the signing secrets and the
+    # first administrator's credentials — see .env.example. Secrets never enter the image.
+    env_file:
+      - .env
+
+    environment:
+      NODE_ENV: production
+      # Only Traefik sits in front of this container, so the client address is the last entry
+      # Traefik wrote into X-Forwarded-For. Counting the wrong number of hops would let a visitor
+      # forge the address that rate limits and the audit log are keyed on.
+      TRUSTED_PROXY_HOPS: '1'
+      # Must agree with the volume below. Also set in the Dockerfile; repeated here because this
+      # is the file that decides where the volume goes.
+      DATA_DIR: /app/data
+
+    # No published host port: traffic arrives through Traefik, which also terminates TLS.
     expose:
       - '80'
-    networks:
-      - client_ennie-coffee_net
-    depends_on:
-      - app
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 128M
-    logging:
-      driver: json-file
-      options:
-        max-size: '10m'
-        max-file: '3'
 
-  db:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-ennie}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
-      POSTGRES_DB: ${POSTGRES_DB:-ennie}
-    volumes:
-      - db-data:/var/lib/postgresql/data
     networks:
       - client_ennie-coffee_net
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
+
+    volumes:
+      # The menu, the administrator accounts, the sessions, the audit log and the uploaded
+      # imagery. Without this volume every deploy would reset the site to its seeded menu and
+      # drop the owner's password. One volume, not several, because a product and its photograph
+      # belong together: two volumes could lose one without the other.
+      - ennie-data:/app/data
+
+    # Uploads are decoded through a temporary file. Keeping /tmp in RAM means nothing a visitor
+    # or an uploader sends ever lands on the host's disk.
+    #
+    # `read_only: true` is deliberately NOT set: the Next.js image optimizer writes to
+    # .next/cache, and a read-only root would make every optimization fail with EROFS — logged,
+    # but not fatal, so the symptom would be silent and slow rather than obvious.
+    #
+    # `security_opt: no-new-privileges:true` is deliberately NOT here either: the platform's
+    # compose validation rejects every `security_opt` key by name, regardless of its value, so the
+    # deploy would fail on it. The process already runs as an unprivileged user (see Dockerfile).
+    tmpfs:
+      - /tmp
+
     deploy:
+      # A ceiling against a runaway, not a working-set estimate — a limit costs nothing while it
+      # is unused. The site idles near 150 MB; the high-water mark is image encoding on upload,
+      # where decoding a large photograph to raw pixels can allocate several hundred megabytes at
+      # once. Set this below that peak and the whole site is OOM-killed mid-upload.
       resources:
         limits:
-          cpus: '1.0'
-          memory: 512M
-    stop_grace_period: 30s
+          cpus: '1.5'
+          memory: 2G
+
+    # Long enough for an in-flight upload to finish encoding before the process is killed.
+    stop_grace_period: 20s
+
     logging:
       driver: json-file
       options:
@@ -97,8 +92,9 @@ services:
         max-file: '3'
 
 networks:
+  # Created by the platform, with Traefik attached, before this file is brought up.
   client_ennie-coffee_net:
     external: true
 
 volumes:
-  db-data:
+  ennie-data:

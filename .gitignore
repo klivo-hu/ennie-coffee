@@ -10,3 +10,7 @@ next-env.d.ts
 .env
 .env.*
 !.env.example
+
+# The data store: menu, accounts, sessions, audit log and uploaded imagery. Runtime state, kept
+# in a Docker volume in production and never committed.
+data/

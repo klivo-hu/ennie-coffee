@@ -18,12 +18,11 @@ const booleanFlag = (fallback: boolean) =>
 const isProduction = process.env.NODE_ENV === 'production';
 
 const EnvSchema = z.object({
-  DATABASE_URL: z
-    .string()
-    .trim()
-    .regex(/^postgres(ql)?:\/\//, 'DATABASE_URL must be a postgres:// connection string.')
-    .optional(),
-  DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(50).default(10),
+  /**
+   * Writable directory holding the menu, the admin accounts and the uploaded imagery. Production
+   * mounts a Docker volume here; without one, every edit is lost on the next deployment.
+   */
+  DATA_DIR: z.string().trim().min(1).optional(),
 
   JWT_ACCESS_SECRET: z
     .string()
@@ -44,7 +43,7 @@ const EnvSchema = z.object({
   ADMIN_BOOTSTRAP_PASSWORD: z.string().min(12).max(256).optional(),
   ADMIN_MFA_REQUIRED: booleanFlag(isProduction),
 
-  /** How many reverse proxies sit in front of the app (Traefik + HAProxy = 2). */
+  /** How many reverse proxies sit in front of the app (the platform's Traefik = 1). */
   TRUSTED_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
   /** Secure cookies are the default; only plain-HTTP local development may turn them off. */
   AUTH_COOKIE_SECURE: booleanFlag(isProduction),
@@ -56,8 +55,7 @@ let cached: ServerEnv | null = null;
 
 export function serverEnv(): ServerEnv {
   if (cached) return cached;
-  // A blank value means "not set", so a later env file can switch a setting off with `KEY=`
-  // (.env.local does this for the database during `npm run dev`).
+  // A blank value means "not set", so a later env file can switch a setting off with `KEY=`.
   const present = Object.fromEntries(
     Object.entries(process.env).filter(([, value]) => value !== undefined && value.trim() !== ''),
   );
@@ -72,13 +70,11 @@ export function serverEnv(): ServerEnv {
   return cached;
 }
 
-/** True when a database is configured. A review preview runs without one and serves seed content. */
-export function hasDatabase(): boolean {
-  return Boolean(serverEnv().DATABASE_URL);
-}
-
-/** True when the admin area can run: it needs both the database and a signing secret. */
+/**
+ * True when the admin area can run. The store itself needs no configuration, so the one
+ * requirement is a signing secret for the session tokens: without it no session could be issued
+ * or verified, and every admin request would fail late instead of being refused up front.
+ */
 export function adminEnabled(): boolean {
-  const env = serverEnv();
-  return Boolean(env.DATABASE_URL && env.JWT_ACCESS_SECRET);
+  return Boolean(serverEnv().JWT_ACCESS_SECRET);
 }

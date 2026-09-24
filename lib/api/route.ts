@@ -66,14 +66,11 @@ export function ok(data: unknown, status = 200): NextResponse {
 export function rateLimitedResponse(
   decision: Extract<RateDecision, { allowed: false }>,
 ): NextResponse {
-  const unavailable = decision.reason === 'unavailable';
   return errorResponse(
     new ApiError(
-      unavailable ? 503 : 429,
-      unavailable ? 'unavailable' : 'rate_limited',
-      unavailable
-        ? 'A szolgáltatás átmenetileg nem érhető el. Próbáld újra később.'
-        : 'Túl sok kérés érkezett. Várj egy kicsit, majd próbáld újra.',
+      429,
+      'rate_limited',
+      'Túl sok kérés érkezett. Várj egy kicsit, majd próbáld újra.',
     ),
     { 'Retry-After': String(decision.retryAfterSeconds) },
   );
@@ -106,7 +103,7 @@ export function route<P = Record<string, never>>(
         );
       }
 
-      const bySource = await checkRateLimit(tier, scope, { source: client.ip });
+      const bySource = checkRateLimit(tier, scope, { source: client.ip });
       if (!bySource.allowed) return rateLimitedResponse(bySource);
 
       let principal: AdminPrincipal | null = null;
@@ -123,7 +120,7 @@ export function route<P = Record<string, never>>(
         if (!can(principal.user.role, options.permission)) {
           throw new ApiError(403, 'forbidden', 'Ehhez a művelethez nincs jogosultságod.');
         }
-        const byIdentity = await checkRateLimit(tier, scope, { identity: principal.user.id });
+        const byIdentity = checkRateLimit(tier, scope, { identity: principal.user.id });
         if (!byIdentity.allowed) return rateLimitedResponse(byIdentity);
       }
 
@@ -169,7 +166,7 @@ export async function readJson<T>(request: NextRequest, schema: z.ZodType<T>): P
   return schema.parse(raw);
 }
 
-/** Route params that must be UUIDs are validated before touching the database. */
+/** Route params that must be UUIDs are validated before anything reads the store. */
 export function uuidParam(value: string): string {
   const parsed = z.uuid().safeParse(value);
   if (!parsed.success) throw new ApiError(404, 'not_found', 'Nem található.');

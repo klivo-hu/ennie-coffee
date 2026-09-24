@@ -11,12 +11,15 @@ services:
     build:
       context: .
       target: dev
-    # Source is bind-mounted so edits reload in place. The anonymous volumes keep the image's
-    # Linux-built node_modules and .next from being shadowed by the host directory.
     volumes:
+      # Source is bind-mounted so edits reload in place. The anonymous volumes keep the image's
+      # Linux-built node_modules and .next from being shadowed by the host directory.
       - .:/app
       - /app/node_modules
       - /app/.next
+      # The data store is a named volume rather than part of the bind mount, so the JSON files and
+      # the encoded imagery never appear in the working tree (and can never be committed).
+      - ennie-dev-data:/app/data
     ports:
       - '3000:3000'
     env_file:
@@ -26,28 +29,9 @@ services:
       NODE_ENV: development
       SITE_URL: http://localhost:3000
       TRUSTED_PROXY_HOPS: '0'
+      DATA_DIR: /app/data
       # Bind-mounted file events do not always reach the container on Windows and macOS.
       WATCHPACK_POLLING: 'true'
-    depends_on:
-      db:
-        condition: service_healthy
-
-  db:
-    image: postgres:17-alpine
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-ennie}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
-      POSTGRES_DB: ${POSTGRES_DB:-ennie}
-    # Published on the host so local tools (and `npm run dev`) can reach it.
-    ports:
-      - '5432:5432'
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
 volumes:
-  db-data:
+  ennie-dev-data:

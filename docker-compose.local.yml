@@ -1,12 +1,11 @@
-# LOCAL, PRODUCTION-LIKE STACK — the same images and topology as docker-compose.yml (HAProxy in
-# front of two app replicas, PostgreSQL behind), on your own machine. The hosting platform never
-# reads this file.
+# LOCAL, PRODUCTION-LIKE STACK — the same image and the same single-container topology as
+# docker-compose.yml, on your own machine. The hosting platform never reads this file.
 #
 #   docker compose -f docker-compose.local.yml up --build
 #   open http://localhost:8080          (admin: http://localhost:8080/admin)
 #
-# Settings come from .env (secrets, database, admin account — see .env.example), with the
-# localhost switches in docker/local.env applied on top.
+# Settings come from .env (secrets and the admin account — see .env.example), with the localhost
+# switches in docker/local.env applied on top.
 name: ennie-coffee-local
 
 services:
@@ -20,45 +19,18 @@ services:
       - docker/local.env
     environment:
       NODE_ENV: production
-      # Only HAProxy sits in front locally.
-      TRUSTED_PROXY_HOPS: '1'
-    expose:
-      - '80'
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      replicas: 2
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 768M
-    stop_grace_period: 20s
-
-  web:
-    build: ./docker/haproxy
-    restart: unless-stopped
+      # Nothing sits in front of the container locally, so the client address is the connection's.
+      TRUSTED_PROXY_HOPS: '0'
+      DATA_DIR: /app/data
     ports:
       - '8080:80'
-      # HAProxy statistics and Prometheus metrics: http://localhost:8404/stats
-      - '127.0.0.1:8404:8404'
-    depends_on:
-      - app
-
-  db:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-ennie}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
-      POSTGRES_DB: ${POSTGRES_DB:-ennie}
     volumes:
-      - db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      # Same volume role as production. `docker compose -f docker-compose.local.yml down -v`
+      # resets the site to its seeded state.
+      - ennie-data:/app/data
+    tmpfs:
+      - /tmp
+    stop_grace_period: 20s
 
 volumes:
-  db-data:
+  ennie-data:

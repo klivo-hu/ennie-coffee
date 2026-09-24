@@ -1,4 +1,3 @@
-import { eq, sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { ApiError, rateLimitedResponse, readJson, route } from '@/lib/api/route';
 import { audit } from '@/lib/audit';
@@ -7,9 +6,9 @@ import { verifyAgainstDummy, verifyPassword } from '@/lib/auth/password';
 import { createSession, tokenConfig } from '@/lib/auth/session';
 import { signMfaChallenge } from '@/lib/auth/tokens';
 import { serverEnv } from '@/lib/config/env';
-import { connection } from '@/lib/db/client';
-import { adminUsers } from '@/lib/db/schema';
 import { checkRateLimit, resetRateLimit } from '@/lib/security/rate-limit';
+import { findAdminByUsername, updateAdmin } from '@/lib/store/admins';
+import { now } from '@/lib/store/json-store';
 import { loginSchema } from '@/lib/validation/admin';
 
 export const dynamic = 'force-dynamic';
@@ -29,15 +28,10 @@ export const POST = route(
     const { username, password } = await readJson(request, loginSchema);
 
     // Per-identity limit on the name being tried, whether or not it exists.
-    const byIdentity = await checkRateLimit('auth', 'login', { identity: username });
+    const byIdentity = checkRateLimit('auth', 'login', { identity: username });
     if (!byIdentity.allowed) return rateLimitedResponse(byIdentity);
 
-    const { db } = connection();
-    const [user] = await db
-      .select()
-      .from(adminUsers)
-      .where(sql`lower(${adminUsers.username}) = ${username}`)
-      .limit(1);
+    const user = await findAdminByUsername(username);
 
     if (!user || !user.isActive) {
       await verifyAgainstDummy(password);
@@ -50,9 +44,9 @@ export const POST = route(
       throw new ApiError(401, 'invalid_credentials', GENERIC_FAILURE);
     }
 
-    if (user.lockedUntil && user.lockedUntil.getTime() > Date.now()) {
+    if (user.lockedUntil && Date.parse(user.lockedUntil) > Date.now()) {
       await verifyAgainstDummy(password);
-      const minutes = Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60_000);
+      const minutes = Math.ceil((Date.parse(user.lockedUntil) - Date.now()) / 60_000);
       throw new ApiError(
         429,
         'locked',
@@ -63,17 +57,14 @@ export const POST = route(
     const valid = await verifyPassword(user.passwordHash, password);
     if (!valid) {
       const failures = user.failedLoginCount + 1;
-      await db
-        .update(adminUsers)
-        .set({
-          failedLoginCount: failures,
-          failedSinceLastLogin: user.failedSinceLastLogin + 1,
-          lockedUntil:
-            failures >= LOCK_AFTER_FAILURES
-              ? new Date(Date.now() + lockMinutes(failures) * 60_000)
-              : null,
-        })
-        .where(eq(adminUsers.id, user.id));
+      await updateAdmin(user.id, {
+        failedLoginCount: failures,
+        failedSinceLastLogin: user.failedSinceLastLogin + 1,
+        lockedUntil:
+          failures >= LOCK_AFTER_FAILURES
+            ? new Date(Date.now() + lockMinutes(failures) * 60_000).toISOString()
+            : null,
+      });
       await audit({
         actorId: user.id,
         action: 'auth.login_failed',
@@ -83,7 +74,7 @@ export const POST = route(
       throw new ApiError(401, 'invalid_credentials', GENERIC_FAILURE);
     }
 
-    await resetRateLimit('auth', 'login', username);
+    resetRateLimit('auth', 'login', username);
 
     if (user.mfaEnabled && user.mfaSecretEncrypted) {
       // Password proven; the session is only issued after the second factor.
@@ -96,17 +87,13 @@ export const POST = route(
       return response;
     }
 
-    const [updated] = await db
-      .update(adminUsers)
-      .set({
-        failedLoginCount: 0,
-        lockedUntil: null,
-        previousFailedAttempts: user.failedSinceLastLogin,
-        failedSinceLastLogin: 0,
-        lastLoginAt: new Date(),
-      })
-      .where(eq(adminUsers.id, user.id))
-      .returning();
+    const updated = await updateAdmin(user.id, {
+      failedLoginCount: 0,
+      lockedUntil: null,
+      previousFailedAttempts: user.failedSinceLastLogin,
+      failedSinceLastLogin: 0,
+      lastLoginAt: now(),
+    });
     const session = await createSession(updated ?? user, false, client);
     await audit({ actorId: user.id, action: 'auth.login', ip: client.ip, detail: { mfa: false } });
 

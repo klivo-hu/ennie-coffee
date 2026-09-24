@@ -2,7 +2,7 @@
  * External links the café can show: social profiles and online-ordering platforms. They share
  * one table and one admin screen, but the site treats them differently — social profiles appear
  * in the "Kövess minket" section and the footer icons; ordering platforms appear as the
- * "Online rendelés" call to action. One list, so the database enum, the server validation, the
+ * "Online rendelés" call to action. One list, so the stored values, the server validation, the
  * admin form, and the public icon set cannot drift apart.
  */
 export const SOCIAL_PLATFORMS = [

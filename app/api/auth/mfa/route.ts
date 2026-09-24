@@ -1,4 +1,3 @@
-import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { ApiError, rateLimitedResponse, readJson, route } from '@/lib/api/route';
 import { audit } from '@/lib/audit';
@@ -7,9 +6,9 @@ import { decryptSecret, sha256 } from '@/lib/auth/crypto';
 import { createSession, tokenConfig } from '@/lib/auth/session';
 import { verifyMfaChallenge } from '@/lib/auth/tokens';
 import { normalizeRecoveryCode, verifyTotp } from '@/lib/auth/totp';
-import { connection } from '@/lib/db/client';
-import { adminUsers } from '@/lib/db/schema';
 import { checkRateLimit } from '@/lib/security/rate-limit';
+import { findAdminById, updateAdmin, type AdminUserPatch } from '@/lib/store/admins';
+import { now } from '@/lib/store/json-store';
 import { mfaVerifySchema } from '@/lib/validation/admin';
 
 export const dynamic = 'force-dynamic';
@@ -24,19 +23,18 @@ export const POST = route(
       throw new ApiError(401, 'challenge_expired', 'A belépés lejárt. Add meg újra a jelszavad.');
     }
 
-    const byIdentity = await checkRateLimit('auth', 'mfa', { identity: userId });
+    const byIdentity = checkRateLimit('auth', 'mfa', { identity: userId });
     if (!byIdentity.allowed) return rateLimitedResponse(byIdentity);
 
     const input = await readJson(request, mfaVerifySchema);
-    const { db } = connection();
-    const [user] = await db.select().from(adminUsers).where(eq(adminUsers.id, userId)).limit(1);
+    const user = await findAdminById(userId);
     if (!user || !user.isActive || !user.mfaEnabled || !user.mfaSecretEncrypted) {
       throw new ApiError(401, 'challenge_expired', 'A belépés lejárt. Add meg újra a jelszavad.');
     }
 
     let accepted = false;
     let method: 'totp' | 'recovery' = 'totp';
-    const updates: Partial<typeof adminUsers.$inferInsert> = {};
+    const updates: AdminUserPatch = {};
 
     if ('code' in input) {
       const step = verifyTotp(decryptSecret(user.mfaSecretEncrypted), input.code, user.mfaLastStep);
@@ -54,10 +52,7 @@ export const POST = route(
     }
 
     if (!accepted) {
-      await db
-        .update(adminUsers)
-        .set({ failedSinceLastLogin: user.failedSinceLastLogin + 1 })
-        .where(eq(adminUsers.id, user.id));
+      await updateAdmin(user.id, { failedSinceLastLogin: user.failedSinceLastLogin + 1 });
       await audit({
         actorId: user.id,
         action: 'auth.mfa_failed',
@@ -67,18 +62,14 @@ export const POST = route(
       throw new ApiError(401, 'invalid_code', 'A kód nem megfelelő vagy már felhasználták.');
     }
 
-    const [updated] = await db
-      .update(adminUsers)
-      .set({
-        ...updates,
-        failedLoginCount: 0,
-        lockedUntil: null,
-        previousFailedAttempts: user.failedSinceLastLogin,
-        failedSinceLastLogin: 0,
-        lastLoginAt: new Date(),
-      })
-      .where(eq(adminUsers.id, user.id))
-      .returning();
+    const updated = await updateAdmin(user.id, {
+      ...updates,
+      failedLoginCount: 0,
+      lockedUntil: null,
+      previousFailedAttempts: user.failedSinceLastLogin,
+      failedSinceLastLogin: 0,
+      lastLoginAt: now(),
+    });
 
     const session = await createSession(updated ?? user, true, client);
     await audit({ actorId: user.id, action: 'auth.login', ip: client.ip, detail: { mfa: method } });

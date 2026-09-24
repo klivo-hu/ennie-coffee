@@ -19,7 +19,7 @@ const nextConfig = {
   output: 'standalone',
   poweredByHeader: false,
   // Native / Node-only modules stay outside the server bundle and are traced into standalone.
-  serverExternalPackages: ['@node-rs/argon2', 'sharp', 'postgres'],
+  serverExternalPackages: ['@node-rs/argon2', 'sharp'],
   images: {
     formats: ['image/avif', 'image/webp'],
     // Candidate widths about 1.2× apart, so the browser's pick is never far above what a slot

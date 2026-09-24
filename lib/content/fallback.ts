@@ -20,8 +20,8 @@ const STATIC_IMAGES: Record<string, StaticImageData> = {
 };
 
 /**
- * The published menu rendered straight from the seed data. Used when no database is configured
- * (a review preview) or when it cannot be reached, so the price list degrades to the café's
+ * The published menu rendered straight from the seed data. Used while the data directory is
+ * still being seeded, and whenever it cannot be read, so the price list degrades to the café's
  * published menu instead of an error page. Hidden seed items stay hidden here too.
  */
 export function fallbackContent(): SiteContent {

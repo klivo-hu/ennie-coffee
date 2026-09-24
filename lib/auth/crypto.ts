@@ -8,8 +8,8 @@ export function randomToken(bytes = 32): string {
 
 /**
  * Refresh tokens and recovery codes are high-entropy random values, so a fast hash is the right
- * tool: it makes a database leak useless without making lookups expensive. (Passwords, which are
- * low-entropy, use Argon2id instead — see password.ts.)
+ * tool: it makes a leak of the stored values useless without making lookups expensive.
+ * (Passwords, which are low-entropy, use Argon2id instead — see password.ts.)
  */
 export function sha256(value: string): string {
   return createHash('sha256').update(value).digest('base64url');

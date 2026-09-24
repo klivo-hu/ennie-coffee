@@ -2,7 +2,6 @@ import { ok, readJson, route, uuidParam } from '@/lib/api/route';
 import { deleteProduct, updateProduct } from '@/lib/admin/products';
 import { audit } from '@/lib/audit';
 import { invalidateContent } from '@/lib/content/cache';
-import { connection } from '@/lib/db/client';
 import { productUpdateSchema } from '@/lib/validation/admin';
 
 export const dynamic = 'force-dynamic';
@@ -14,8 +13,8 @@ export const PATCH = route<Params>(
   async ({ request, params, principal, client }) => {
     const id = uuidParam(params.id);
     const input = await readJson(request, productUpdateSchema);
-    await updateProduct(connection().db, id, input);
-    await invalidateContent();
+    await updateProduct(id, input);
+    invalidateContent();
     await audit({
       actorId: principal!.user.id,
       action: 'product.updated',
@@ -33,8 +32,8 @@ export const DELETE = route<Params>(
   { rateLimit: { tier: 'expensive', scope: 'products-delete' }, permission: 'content:write' },
   async ({ params, principal, client }) => {
     const id = uuidParam(params.id);
-    await deleteProduct(connection().db, id);
-    await invalidateContent();
+    await deleteProduct(id);
+    invalidateContent();
     await audit({
       actorId: principal!.user.id,
       action: 'product.deleted',

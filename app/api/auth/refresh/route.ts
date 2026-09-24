@@ -25,7 +25,7 @@ const REASON_PARAM: Record<string, string> = {
 async function refresh(request: NextRequest) {
   const client = requestContext(request);
   if (!adminEnabled()) return { outcome: 'disabled' as const };
-  const decision = await checkRateLimit('admin', 'refresh', { source: client.ip });
+  const decision = checkRateLimit('admin', 'refresh', { source: client.ip });
   if (!decision.allowed) return { outcome: 'limited' as const, decision };
 
   const token = request.cookies.get(cookieNames().refresh)?.value;

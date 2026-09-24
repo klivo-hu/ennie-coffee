@@ -6,7 +6,7 @@ import { absoluteUrl } from '@/lib/site-url';
 
 /**
  * Structured data. Only facts the café has published are emitted — no rating, price range, or
- * cuisine claims the sources do not support. Values come from the environment and the database,
+ * cuisine claims the sources do not support. Values come from the environment and the store,
  * so they are serialized through `jsonLdScript`, which escapes `<` to keep a stray "</script>"
  * inside a value from ever closing the element.
  */

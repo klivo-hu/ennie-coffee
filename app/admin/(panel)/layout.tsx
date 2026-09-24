@@ -23,9 +23,9 @@ export default async function PanelLayout({ children }: { children: React.ReactN
           Az adminisztráció nincs bekapcsolva
         </h1>
         <p className="mt-4 text-body text-ink-soft">
-          Ezen a szerveren nincs beállítva adatbázis vagy aláíró kulcs (DATABASE_URL,
-          JWT_ACCESS_SECRET). A nyilvános oldal a közzétett árlistával működik tovább. A beállítást
-          a docs/environment.md írja le.
+          Ezen a szerveren nincs beállítva aláíró kulcs (<code>JWT_ACCESS_SECRET</code>), enélkül
+          nem lehet belépni. A nyilvános oldal a közzétett árlistával működik tovább. A szükséges
+          beállításokat a <code>.env.example</code> sorolja fel.
         </p>
       </main>
     );

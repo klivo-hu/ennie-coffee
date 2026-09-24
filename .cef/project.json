@@ -8,8 +8,8 @@
   "language": "typescript",
   "buildSystem": "next",
   "deployment": "docker",
-  "database": "postgres",
-  "orm": "drizzle",
+  "database": "none",
+  "orm": "none",
   "cms": "none",
   "authentication": "none",
   "features": {

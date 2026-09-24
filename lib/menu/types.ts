@@ -1,7 +1,7 @@
 import type { StaticImageData } from 'next/image';
 
 /**
- * The menu as the public site consumes it. Both sources — the database and the seed fallback —
+ * The menu as the public site consumes it. Both sources — the store and the seed fallback —
  * produce exactly this shape, so no component knows where its data came from.
  */
 
@@ -63,6 +63,6 @@ export interface SiteContent {
   readonly social: readonly SocialLink[];
   /** Online-ordering platforms (foodora, Wolt) — shown as a call to action, not as social media. */
   readonly ordering: readonly SocialLink[];
-  /** `database` in normal operation; `fallback` when the store is absent or unreachable. */
-  readonly source: 'database' | 'fallback';
+  /** `store` in normal operation; `fallback` when the data directory is empty or unreadable. */
+  readonly source: 'store' | 'fallback';
 }

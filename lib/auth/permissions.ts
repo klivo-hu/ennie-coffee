@@ -1,8 +1,8 @@
-import type { AdminRole } from '@/lib/db/schema';
+import type { AdminRole } from '@/lib/store/types';
 
 /**
- * Role model. Authorization is decided on the server from the role stored in the database (not
- * the one in the token), so a role change or deactivation applies on the very next request.
+ * Role model. Authorization is decided on the server from the stored role (not the one in the
+ * token), so a role change or deactivation applies on the very next request.
  */
 export type Permission =
   | 'content:write' // products, categories, prices

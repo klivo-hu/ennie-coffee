@@ -1,10 +1,9 @@
-import { eq } from 'drizzle-orm';
 import { ApiError, ok, readJson, route } from '@/lib/api/route';
 import { audit } from '@/lib/audit';
 import { hashPassword, passwordProblem, verifyPassword } from '@/lib/auth/password';
 import { revokeAllForUser } from '@/lib/auth/session';
-import { connection } from '@/lib/db/client';
-import { adminUsers } from '@/lib/db/schema';
+import { updateAdmin } from '@/lib/store/admins';
+import { now } from '@/lib/store/json-store';
 import { passwordChangeSchema } from '@/lib/validation/admin';
 
 export const dynamic = 'force-dynamic';
@@ -33,10 +32,10 @@ export const POST = route(
       });
     }
 
-    await connection()
-      .db.update(adminUsers)
-      .set({ passwordHash: await hashPassword(newPassword), passwordChangedAt: new Date() })
-      .where(eq(adminUsers.id, user.id));
+    await updateAdmin(user.id, {
+      passwordHash: await hashPassword(newPassword),
+      passwordChangedAt: now(),
+    });
     await revokeAllForUser(user.id, 'password-changed', principal!.sessionId);
     await audit({ actorId: user.id, action: 'account.password_changed', ip: client.ip });
     return ok({ ok: true });

@@ -15,6 +15,9 @@ Ennie Coffee (Ennie Coffee Kávéház) — premium independent coffee shop in Ha
   - `project.json` / `runtime.json` — machine-readable project and runtime configuration.
 - `app/` — routes and pages. `components/` — reusable UI. `features/` — feature modules.
 - `lib/` — utilities and clients. `hooks/` — React hooks. `types/` — shared types.
+- `lib/store/` — **persistence.** Typed collections over atomic JSON files under `DATA_DIR`
+  (a Docker volume in production). Nothing above it knows how storage works; changing the
+  storage engine means reimplementing `lib/store/json-store.ts` and nothing else.
 - `content/` — content and copy (including legal pages under `content/legal/`). `docs/` — documentation.
 - `tests/` — tests. `docker/` — container support. `public/` — static assets.
 
@@ -22,8 +25,8 @@ Ennie Coffee (Ennie Coffee Kávéház) — premium independent coffee shop in Ha
 
 - Framework: **nextjs** · Language: **typescript** · Package manager: **pnpm**
 - Styling: **tailwind** · UI: **shadcn** · Animation: **gsap**
-- Data: **postgres** (ORM: **drizzle**) · Auth: **none** · CMS: **none**
-- Deployment: **docker** · Docker: enabled (port 3000)
+- Data: **JSON file store** on a mounted volume (`lib/store/`) · Auth: **none** · CMS: **none**
+- Deployment: **docker** · Docker: enabled (one container, port 80)
 
 ## Enabled CEF engines
 

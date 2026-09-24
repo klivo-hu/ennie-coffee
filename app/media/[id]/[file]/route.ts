@@ -1,7 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { z } from 'zod';
-import { hasDatabase } from '@/lib/config/env';
-import { connection } from '@/lib/db/client';
 import { logger } from '@/lib/log';
 import { readVariant } from '@/lib/media/store';
 
@@ -21,6 +19,10 @@ function notFound() {
 /**
  * Serves a stored image variant. Media ids are random and a stored variant never changes, so the
  * response is cacheable forever by browsers and any shared cache in front of the site.
+ *
+ * The id is checked to be a UUID and the file name to be `<width>.<format>` before anything
+ * touches the filesystem, and `readVariant` additionally refuses a variant that is not recorded —
+ * so no request can name a path the application did not create.
  */
 export async function GET(
   _request: NextRequest,
@@ -28,11 +30,11 @@ export async function GET(
 ) {
   const { id, file } = await segment.params;
   const match = FILE.exec(file);
-  if (!match || !z.uuid().safeParse(id).success || !hasDatabase()) return notFound();
+  if (!match || !z.uuid().safeParse(id).success) return notFound();
   const [, width, format] = match as unknown as [string, string, 'avif' | 'webp'];
 
   try {
-    const variant = await readVariant(connection().db, id, Number(width), format);
+    const variant = await readVariant(id, Number(width), format);
     if (!variant) return notFound();
     return new NextResponse(new Uint8Array(variant.bytes), {
       status: 200,

@@ -1,7 +1,6 @@
 import { ApiError, ok, route } from '@/lib/api/route';
 import { audit } from '@/lib/audit';
 import { adminImages } from '@/lib/admin/media';
-import { connection } from '@/lib/db/client';
 import { ImageRejectedError, MAX_UPLOAD_BYTES, processImage } from '@/lib/media/process';
 import { saveProcessedImage } from '@/lib/media/store';
 
@@ -40,9 +39,8 @@ export const POST = route(
       throw error;
     }
 
-    const database = connection().db;
     const name = file.name.replace(/[^\p{L}\p{N}._ -]/gu, '').slice(0, 120) || 'feltoltes';
-    const id = await saveProcessedImage(database, processed, name, principal!.user.id);
+    const id = await saveProcessedImage(processed, name, principal!.user.id);
     await audit({
       actorId: principal!.user.id,
       action: 'media.uploaded',
@@ -51,7 +49,7 @@ export const POST = route(
       ip: client.ip,
       detail: { width: processed.width, height: processed.height },
     });
-    const preview = (await adminImages(database, [id])).get(id);
+    const preview = (await adminImages([id])).get(id);
     return ok(
       { id, previewUrl: preview?.previewUrl ?? null, dominantColor: processed.dominantColor },
       201,

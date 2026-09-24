@@ -1,6 +1,6 @@
 /**
- * The menu as published by the café, used to seed an empty database and to render the site when
- * no database is configured (a review preview). Every entry traces to a source:
+ * The menu as published by the café, used to seed an empty data directory and to render the site
+ * while that seeding is still running. Every entry traces to a source:
  *
  * - `foodora`: the current Foodora listing "Ennie 24 Coffee" (product list, grouping, and the
  *   "from" prices shown there — prices on a delivery platform may differ from the counter).

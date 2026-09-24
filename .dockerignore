@@ -11,10 +11,15 @@ coverage
 *.log
 *.tsbuildinfo
 
+# The data store. Anything here is a local run's content — menu edits, sessions, uploaded
+# imagery — and it belongs in a volume, never baked into an image that is served to the public.
+data
+
 # Tooling and documentation the image does not need.
 .cef
 .claude
 docs
+deploy
 tests
 Dockerfile
 .dockerignore

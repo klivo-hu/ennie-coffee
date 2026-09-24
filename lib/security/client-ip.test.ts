@@ -3,7 +3,7 @@ import { clientIpFromForwarded } from './client-ip';
 
 describe('clientIpFromForwarded', () => {
   it('reads the entry written by the outermost trusted proxy', () => {
-    // Traefik wrote the client address, HAProxy appended Traefik's.
+    // Two proxies: the outer one wrote the client address, the inner one appended the outer's.
     expect(clientIpFromForwarded('203.0.113.7, 172.18.0.2', 2)).toBe('203.0.113.7');
     expect(clientIpFromForwarded('203.0.113.7', 1)).toBe('203.0.113.7');
   });

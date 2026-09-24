@@ -47,13 +47,13 @@ metadata:
   styling: tailwind
   uiLibrary: shadcn
   animation: gsap
-  database: postgres
-  orm: drizzle
+  database: none
+  orm: none
   authentication: none
   cms: none
 docker:
   enabled: true
-  port: 3000
+  port: 80
 features:
   adminPanel: true
   blog: false

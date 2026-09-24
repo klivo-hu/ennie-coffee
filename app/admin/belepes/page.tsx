@@ -49,8 +49,7 @@ export default async function LoginPage({
           <LoginForm next={next} />
         ) : (
           <p className="mt-6 text-body text-ink-soft">
-            Az adminisztráció ezen a szerveren nincs bekapcsolva (hiányzik az adatbázis vagy az
-            aláíró kulcs).
+            Az adminisztráció ezen a szerveren nincs bekapcsolva (hiányzik az aláíró kulcs).
           </p>
         )}
       </div>

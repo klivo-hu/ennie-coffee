@@ -1,4 +1,3 @@
-import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { ApiError, readJson, route } from '@/lib/api/route';
 import { audit } from '@/lib/audit';
@@ -7,8 +6,7 @@ import { decryptSecret } from '@/lib/auth/crypto';
 import { markSessionMfaVerified, revokeAllForUser, tokenConfig } from '@/lib/auth/session';
 import { signAccessToken } from '@/lib/auth/tokens';
 import { generateRecoveryCodes, verifyTotp } from '@/lib/auth/totp';
-import { connection } from '@/lib/db/client';
-import { adminUsers } from '@/lib/db/schema';
+import { updateAdmin } from '@/lib/store/admins';
 import { mfaCodeSchema } from '@/lib/validation/admin';
 
 export const dynamic = 'force-dynamic';
@@ -44,10 +42,11 @@ export const POST = route(
     }
 
     const recovery = generateRecoveryCodes();
-    await connection()
-      .db.update(adminUsers)
-      .set({ mfaEnabled: true, mfaLastStep: step, mfaRecoveryCodes: recovery.hashed })
-      .where(eq(adminUsers.id, user.id));
+    await updateAdmin(user.id, {
+      mfaEnabled: true,
+      mfaLastStep: step,
+      mfaRecoveryCodes: recovery.hashed,
+    });
     await markSessionMfaVerified(principal!.sessionId);
     await revokeAllForUser(user.id, 'mfa-enabled', principal!.sessionId);
     await audit({ actorId: user.id, action: 'account.mfa_enabled', ip: client.ip });

@@ -3,7 +3,7 @@ import { PLATFORM_LABEL, SOCIAL_PLATFORMS, type SocialPlatformId } from '@/lib/s
 
 /**
  * Server-side input contracts for the admin API. The browser forms mirror these for fast
- * feedback, but only these decide what reaches the database. Text is stored as plain text and
+ * feedback, but only these decide what reaches the store. Text is stored as plain text and
  * escaped by React on output, so nothing here needs HTML sanitizing — control characters and
  * oversized values are rejected instead.
  */

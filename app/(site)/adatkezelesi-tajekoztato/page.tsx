@@ -108,7 +108,7 @@ export default function PrivacyPage() {
 
       <h2>Adatfeldolgozó</h2>
       <p>
-        A weboldalt és az adatbázist a következő tárhelyszolgáltató üzemelteti:{' '}
+        A weboldalt és a tárolt adatokat a következő tárhelyszolgáltató üzemelteti:{' '}
         <FieldValue field={info.hostingName} />, <FieldValue field={info.hostingAddress} />.
       </p>
 

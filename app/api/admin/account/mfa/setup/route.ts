@@ -1,9 +1,7 @@
-import { eq } from 'drizzle-orm';
 import { ApiError, ok, route } from '@/lib/api/route';
 import { encryptSecret } from '@/lib/auth/crypto';
 import { enrollmentQr, generateTotpSecret } from '@/lib/auth/totp';
-import { connection } from '@/lib/db/client';
-import { adminUsers } from '@/lib/db/schema';
+import { updateAdmin } from '@/lib/store/admins';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,10 +25,10 @@ export const POST = route(
       );
     }
     const secret = generateTotpSecret();
-    await connection()
-      .db.update(adminUsers)
-      .set({ mfaSecretEncrypted: encryptSecret(secret), mfaLastStep: null })
-      .where(eq(adminUsers.id, user.id));
+    await updateAdmin(user.id, {
+      mfaSecretEncrypted: encryptSecret(secret),
+      mfaLastStep: null,
+    });
     const { svg } = await enrollmentQr(secret, user.username);
     return ok({ qrSvg: svg, secret: secret.replace(/(.{4})/g, '$1 ').trim() });
   },

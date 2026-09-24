@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
-import { desc, eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
+import { recentAudit } from '@/lib/audit';
 import { guardAdminPage } from '@/lib/auth/page-guard';
 import { can } from '@/lib/auth/permissions';
-import { connection } from '@/lib/db/client';
-import { adminUsers, auditLog } from '@/lib/db/schema';
+import { adminUsernamesById } from '@/lib/store/admins';
 
 export const metadata: Metadata = { title: 'Napló' };
 
@@ -45,18 +44,7 @@ export default async function AuditPage() {
   if (guard.state !== 'ok') return null;
   if (!can(guard.principal.user.role, 'audit:read')) notFound();
 
-  const rows = await connection()
-    .db.select({
-      id: auditLog.id,
-      at: auditLog.at,
-      action: auditLog.action,
-      ip: auditLog.ipAddress,
-      actor: adminUsers.username,
-    })
-    .from(auditLog)
-    .leftJoin(adminUsers, eq(adminUsers.id, auditLog.actorId))
-    .orderBy(desc(auditLog.at))
-    .limit(150);
+  const rows = await recentAudit(150, await adminUsernamesById());
 
   return (
     <div className="grid gap-8">
@@ -93,9 +81,11 @@ export default async function AuditPage() {
             <tbody className="divide-y divide-line text-ink-soft">
               {rows.map((row) => (
                 <tr key={row.id}>
-                  <td className="whitespace-nowrap px-5 py-3 tabular">{DATE.format(row.at)}</td>
+                  <td className="whitespace-nowrap px-5 py-3 tabular">
+                    {DATE.format(new Date(row.at))}
+                  </td>
                   <td className="px-5 py-3 text-ink">{ACTION_LABEL[row.action] ?? row.action}</td>
-                  <td className="px-5 py-3">{row.actor ?? '—'}</td>
+                  <td className="px-5 py-3">{row.actorUsername ?? '—'}</td>
                   <td className="px-5 py-3 tabular">{row.ip ?? '—'}</td>
                 </tr>
               ))}

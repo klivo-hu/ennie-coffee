@@ -2,8 +2,8 @@ import { errors, jwtVerify, SignJWT, type JWTPayload } from 'jose';
 
 /**
  * Short-lived access tokens (HS256, 10 minutes). The token proves who is calling and which
- * session it belongs to; every protected handler additionally checks that session in the
- * database, so logout and revocation take effect immediately rather than when the token expires.
+ * session it belongs to; every protected handler additionally checks that the session is still
+ * live in the store, so logout and revocation take effect immediately rather than at expiry.
  *
  * Verification pins the algorithm, issuer, and audience, and requires `exp` — `alg: none` and
  * algorithm-confusion tokens are rejected by construction.

@@ -1,4 +1,3 @@
-import { eq, sql } from 'drizzle-orm';
 import { ApiError, ok, readJson, route } from '@/lib/api/route';
 import { audit } from '@/lib/audit';
 import { decryptSecret } from '@/lib/auth/crypto';
@@ -6,8 +5,7 @@ import { verifyPassword } from '@/lib/auth/password';
 import { revokeAllForUser } from '@/lib/auth/session';
 import { verifyTotp } from '@/lib/auth/totp';
 import { serverEnv } from '@/lib/config/env';
-import { connection } from '@/lib/db/client';
-import { adminUsers } from '@/lib/db/schema';
+import { updateAdmin } from '@/lib/store/admins';
 import { mfaDisableSchema } from '@/lib/validation/admin';
 
 export const dynamic = 'force-dynamic';
@@ -29,15 +27,12 @@ export const POST = route(
     if (!passwordOk || step === null) {
       throw new ApiError(422, 'validation', 'A jelszó vagy a kód nem megfelelő.');
     }
-    await connection()
-      .db.update(adminUsers)
-      .set({
-        mfaEnabled: false,
-        mfaSecretEncrypted: null,
-        mfaLastStep: null,
-        mfaRecoveryCodes: sql`'{}'::text[]`,
-      })
-      .where(eq(adminUsers.id, user.id));
+    await updateAdmin(user.id, {
+      mfaEnabled: false,
+      mfaSecretEncrypted: null,
+      mfaLastStep: null,
+      mfaRecoveryCodes: [],
+    });
     await revokeAllForUser(user.id, 'mfa-disabled', principal!.sessionId);
     await audit({ actorId: user.id, action: 'account.mfa_disabled', ip: client.ip });
     return ok({ ok: true });

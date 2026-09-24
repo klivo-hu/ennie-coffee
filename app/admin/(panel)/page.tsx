@@ -1,30 +1,25 @@
 import type { Metadata } from 'next';
 import { Link } from '@/components/ui/link';
-import { sql } from 'drizzle-orm';
 import { guardAdminPage } from '@/lib/auth/page-guard';
 import { serverEnv } from '@/lib/config/env';
 import { missingLegalFields } from '@/lib/config/legal';
-import { connection } from '@/lib/db/client';
+import { categoriesStore, productsStore, socialStore } from '@/lib/store/collections';
 
 export const metadata: Metadata = { title: 'Áttekintés' };
 
 async function counts() {
-  const { db } = connection();
-  const rows = await db.execute<{
-    visible: number;
-    hidden: number;
-    archived: number;
-    categories: number;
-    social: number;
-  }>(sql`
-    select
-      (select count(*)::int from products where not is_archived and is_visible) as visible,
-      (select count(*)::int from products where not is_archived and not is_visible) as hidden,
-      (select count(*)::int from products where is_archived) as archived,
-      (select count(*)::int from categories) as categories,
-      (select count(*)::int from social_links where is_visible) as social
-  `);
-  return rows[0] ?? { visible: 0, hidden: 0, archived: 0, categories: 0, social: 0 };
+  const [categories, products, social] = await Promise.all([
+    categoriesStore.read(),
+    productsStore.read(),
+    socialStore.read(),
+  ]);
+  const live = products.filter((product) => !product.isArchived);
+  return {
+    visible: live.filter((product) => product.isVisible).length,
+    hidden: live.filter((product) => !product.isVisible).length,
+    categories: categories.length,
+    social: social.filter((link) => link.isVisible).length,
+  };
 }
 
 export default async function DashboardPage() {

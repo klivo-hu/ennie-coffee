@@ -1,10 +1,8 @@
-import { eq } from 'drizzle-orm';
 import { ApiError, ok, readJson, route } from '@/lib/api/route';
 import { audit } from '@/lib/audit';
 import { decryptSecret } from '@/lib/auth/crypto';
 import { generateRecoveryCodes, verifyTotp } from '@/lib/auth/totp';
-import { connection } from '@/lib/db/client';
-import { adminUsers } from '@/lib/db/schema';
+import { updateAdmin } from '@/lib/store/admins';
 import { mfaCodeSchema } from '@/lib/validation/admin';
 
 export const dynamic = 'force-dynamic';
@@ -25,10 +23,7 @@ export const POST = route(
       });
     }
     const recovery = generateRecoveryCodes();
-    await connection()
-      .db.update(adminUsers)
-      .set({ mfaRecoveryCodes: recovery.hashed, mfaLastStep: step })
-      .where(eq(adminUsers.id, user.id));
+    await updateAdmin(user.id, { mfaRecoveryCodes: recovery.hashed, mfaLastStep: step });
     await audit({ actorId: user.id, action: 'account.recovery_codes_regenerated', ip: client.ip });
     return ok({ recoveryCodes: recovery.plain });
   },
