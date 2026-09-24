@@ -48,8 +48,14 @@ interface CounterWindow {
  * When it is reached the oldest windows are dropped first — those are the ones closest to
  * expiring anyway, and an entry that is dropped early only ever grants attempts, never denies
  * them, which is the direction a memory guard must fail in.
+ *
+ * Each entry costs roughly a quarter of a kilobyte once the key string, the window object and the
+ * Map's own overhead are counted, so this number is really a memory budget: 5,000 is about 1 MB.
+ * It is also far above anything this site sees — a distinct key exists per source address per
+ * endpoint scope, and a café's price list does not have thousands of simultaneous visitors — so
+ * the cap is a ceiling on an attacker-controlled allocation, not a limit on real traffic.
  */
-const MAX_KEYS = 50_000;
+const MAX_KEYS = 5_000;
 const SWEEP_MS = 60_000;
 
 interface LimiterState {

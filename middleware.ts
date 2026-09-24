@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { redirectToPath } from '@/lib/http/redirect';
 
 /**
  * Per-request Content-Security-Policy with a fresh nonce: only scripts carrying the nonce (Next's
@@ -40,9 +41,11 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/belepes')) {
     const hasAccess = ACCESS_COOKIES.some((name) => request.cookies.has(name));
     if (!hasAccess) {
-      const refresh = new URL('/api/auth/refresh', request.url);
-      refresh.searchParams.set('next', `${pathname}${search}`);
-      return NextResponse.redirect(refresh, 303);
+      // Relative, like every other redirect in the app: behind the platform's proxy an absolute
+      // URL built from the request resolves to the container's own bind address, not the host the
+      // visitor typed. See lib/http/redirect.ts.
+      const query = new URLSearchParams({ next: `${pathname}${search}` });
+      return redirectToPath(`/api/auth/refresh?${query.toString()}`);
     }
   }
 

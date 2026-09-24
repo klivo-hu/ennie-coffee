@@ -36,7 +36,14 @@ export async function GET(
   try {
     const variant = await readVariant(id, Number(width), format);
     if (!variant) return notFound();
-    return new NextResponse(new Uint8Array(variant.bytes), {
+    // A view over the bytes already read, not `new Uint8Array(buffer)` — that constructor copies,
+    // which would hold every served image in memory twice for the life of the response.
+    const body = new Uint8Array(
+      variant.bytes.buffer,
+      variant.bytes.byteOffset,
+      variant.bytes.byteLength,
+    );
+    return new NextResponse(body, {
       status: 200,
       headers: {
         'Content-Type': CONTENT_TYPE[format],

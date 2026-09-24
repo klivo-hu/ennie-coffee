@@ -10,6 +10,15 @@ import sharp, { type Metadata } from 'sharp';
  * upload, so serving an image is a single indexed read with no per-request processing.
  */
 
+/**
+ * libvips keeps an operation cache — 50 MB, 20 file descriptors and 200 entries by default — so
+ * that repeating an identical operation on an identical input is free. This pipeline never
+ * repeats one: each image is decoded once, at seed or at upload, and never processed again. The
+ * cache would therefore hold up to 50 MB of a small VPS's memory permanently, for a hit rate of
+ * zero. Turning it off costs nothing and is the single largest resident saving in the process.
+ */
+sharp.cache(false);
+
 export const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
 const MAX_INPUT_PIXELS = 48_000_000;
 const ACCEPTED_FORMATS = new Set(['jpeg', 'png', 'webp', 'avif', 'heif']);
@@ -85,10 +94,18 @@ export async function processImage(input: Buffer): Promise<ProcessedImage> {
 
   for (const target of [...new Set(widths)]) {
     const resized = sharp(base).resize({ width: target, withoutEnlargement: true });
-    const [avif, webp] = await Promise.all([
-      resized.clone().avif({ quality: 52, effort: 4 }).toBuffer({ resolveWithObject: true }),
-      resized.clone().webp({ quality: 78, effort: 5 }).toBuffer({ resolveWithObject: true }),
-    ]);
+    // Encoded one after the other rather than with Promise.all. Two concurrent libvips encodes
+    // each hold their own resized raster plus their output buffer, so running them together
+    // doubles the peak for this loop — and buys no wall-clock time on a single-core host, where
+    // they would only contend for the same core. Sequential is the same speed and half the peak.
+    const avif = await resized
+      .clone()
+      .avif({ quality: 52, effort: 4 })
+      .toBuffer({ resolveWithObject: true });
+    const webp = await resized
+      .clone()
+      .webp({ quality: 78, effort: 5 })
+      .toBuffer({ resolveWithObject: true });
     variants.push(
       { format: 'avif', width: avif.info.width, height: avif.info.height, bytes: avif.data },
       { format: 'webp', width: webp.info.width, height: webp.info.height, bytes: webp.data },

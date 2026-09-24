@@ -10,6 +10,7 @@ import {
 import { safeAdminPath } from '@/lib/auth/redirect';
 import { rotateSession } from '@/lib/auth/session';
 import { adminEnabled } from '@/lib/config/env';
+import { redirectToPath } from '@/lib/http/redirect';
 import { logger } from '@/lib/log';
 import { checkRateLimit } from '@/lib/security/rate-limit';
 import { isSameOriginRequest, requestContext } from '@/lib/security/request';
@@ -49,23 +50,21 @@ export async function GET(request: NextRequest) {
   try {
     const result = await refresh(request);
     if (result.outcome === 'ok') {
-      const response = NextResponse.redirect(new URL(next, request.url), 303);
+      const response = redirectToPath(next);
       setAccessCookie(response, result.session.accessToken);
       setRefreshCookie(response, result.session.refreshToken, result.session.refreshExpiresAt);
-      response.headers.set('Cache-Control', 'no-store');
       return response;
     }
-    const login = new URL('/admin/belepes', request.url);
-    login.searchParams.set('next', next);
+    const query = new URLSearchParams({ next });
     if (result.outcome === 'failed' && REASON_PARAM[result.reason]) {
-      login.searchParams.set('ok', REASON_PARAM[result.reason] as string);
+      query.set('ok', REASON_PARAM[result.reason] as string);
     }
-    const response = NextResponse.redirect(login, 303);
+    const response = redirectToPath(`/admin/belepes?${query.toString()}`);
     if (result.outcome === 'failed') clearAuthCookies(response);
     return response;
   } catch (error) {
     logger.error('auth.refresh_failed', { error: String(error) });
-    return NextResponse.redirect(new URL('/admin/belepes', request.url), 303);
+    return redirectToPath('/admin/belepes');
   }
 }
 
