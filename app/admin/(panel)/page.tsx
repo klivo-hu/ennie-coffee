@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Link } from '@/components/ui/link';
 import { guardAdminPage } from '@/lib/auth/page-guard';
-import { serverEnv } from '@/lib/config/env';
 import { missingLegalFields } from '@/lib/config/legal';
 import { categoriesStore, productsStore, socialStore } from '@/lib/store/collections';
 
@@ -28,7 +27,6 @@ export default async function DashboardPage() {
   const { user } = guard.principal;
   const stats = await counts();
   const missing = missingLegalFields();
-  const mfaRequired = serverEnv().ADMIN_MFA_REQUIRED;
 
   const notices: React.ReactNode[] = [];
   if (user.previousFailedAttempts > 0) {
@@ -37,15 +35,6 @@ export default async function DashboardPage() {
         Legutóbbi belépésed előtt{' '}
         <strong>{user.previousFailedAttempts} sikertelen belépési kísérlet</strong> történt a
         fiókodba. Ha nem te voltál, <Link href="/admin/fiok">változtass jelszót</Link>.
-      </>,
-    );
-  }
-  if (!user.mfaEnabled && !mfaRequired) {
-    notices.push(
-      <>
-        A kétlépcsős azonosítás nincs bekapcsolva.{' '}
-        <Link href="/admin/fiok">Kapcsold be a Fiók oldalon</Link> — pár perc, és a jelszavad
-        önmagában már nem elég a belépéshez.
       </>,
     );
   }

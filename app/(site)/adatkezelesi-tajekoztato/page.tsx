@@ -114,8 +114,9 @@ export default function PrivacyPage() {
 
       <h2>Adatbiztonság</h2>
       <p>
-        Az adatokat titkosított (HTTPS) kapcsolaton továbbítjuk, a hozzáférést szerepkörökhöz és
-        kétlépcsős azonosításhoz kötjük, és a rendszert rendszeresen frissítjük.
+        Az adatokat titkosított (HTTPS) kapcsolaton továbbítjuk, az adminisztrációs hozzáférést
+        szerepkörökhöz és egyedi jelszóhoz kötjük, a sikertelen belépési kísérleteket korlátozzuk,
+        és a rendszert rendszeresen frissítjük.
       </p>
 
       <h2>Jogaid</h2>
