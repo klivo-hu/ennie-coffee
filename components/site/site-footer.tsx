@@ -132,6 +132,23 @@ export function SiteFooter({
             <li>
               <ConsentSettingsButton className={linkClass} />
             </li>
+            <li>
+              {/*
+                The build credit. `noopener` without `noreferrer`, unlike the other outbound links
+                here: the security half is what matters, and dropping the referrer would hide this
+                site from klivo.hu's own analytics — which is most of what a credit link is for.
+              */}
+              <a
+                href="https://klivo.hu"
+                target="_blank"
+                rel="noopener"
+                className={`${linkClass} inline-flex items-center gap-1`}
+              >
+                Készítette: klivo.hu
+                <ExternalIcon className="size-3.5" />
+                <span className="sr-only"> (új lapon)</span>
+              </a>
+            </li>
           </ul>
         </div>
       </Container>
