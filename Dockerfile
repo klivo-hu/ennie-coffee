@@ -4,7 +4,7 @@
 #   deps     npm ci from the committed lockfile (reproducible)
 #   dev      local hot-reload stage, used only by docker-compose.dev.yml
 #   builder  next build (standalone output)
-#   runner   minimal non-root runtime on port 80 — the default, last stage the platform builds
+#   runner   minimal non-root runtime on port 3000 — the default, last stage the platform builds
 #
 # The runtime is a single Node process. Everything the site stores — the menu, the administrator
 # accounts, the sessions, the audit log and the uploaded imagery — lives under /app/data, which
@@ -41,7 +41,14 @@ RUN npm run build
 
 FROM base AS runner
 ENV NODE_ENV=production
-ENV PORT=80
+# 3000, matching the other sites on the Klivo platform. This has to equal the panel's
+# "container port" for that site, because that is the port Traefik dials — a mismatch is a 502
+# with nothing in any log but the platform's own "site unavailable" page.
+#
+# It is an env var rather than a constant on purpose: the Next standalone server reads PORT at
+# startup and the health check below follows it, so pointing this container at a different port
+# is one line in the panel's Environment, not a rebuild.
+ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 # Where every mutable byte goes. Mount a volume here (docker-compose.yml does) or the owner's
 # edits and uploads are lost the next time the image is replaced.
@@ -66,13 +73,16 @@ RUN mkdir -p /app/data /app/.next/cache && chown -R nextjs:nodejs /app/data /app
 # The server never runs as root: a remote code execution bug in any dependency stays an isolated
 # fault instead of becoming a container takeover.
 USER nextjs
-EXPOSE 80
+EXPOSE 3000
 
 # The health check asks for readiness, which answers only once the server is serving. It is
 # deliberately not the home page: a rendering error should show up in the logs as an error page,
 # not silently flap the container. The long start period covers the very first start on a fresh
 # volume, where the six menu photographs are encoded into their responsive variants.
+#
+# ${PORT} is expanded by the shell at runtime, so overriding PORT moves the server and its check
+# together and they can never end up pointed at different ports.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=3 \
-  CMD wget -q -O /dev/null http://127.0.0.1:80/api/health/ready || exit 1
+  CMD wget -q -O /dev/null "http://127.0.0.1:${PORT:-3000}/api/health/ready" || exit 1
 
 CMD ["node", "server.js"]

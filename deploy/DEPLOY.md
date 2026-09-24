@@ -7,7 +7,7 @@ container per site). No CI is required — the platform builds and runs the repo
 ## The shape of the deployment
 
 ```
-Traefik  ──▶  hosting_ennie-coffee_web   (one Next.js container, port 80)
+Traefik  ──▶  hosting_ennie-coffee_web   (one Next.js container, port 3000)
                         │
                         └── ennie-data volume at /app/data
 ```
@@ -20,7 +20,7 @@ never loses an edit that the admin reported as saved.
 
 | File                       | Purpose                                                                                                                                          |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Dockerfile`               | Multi-stage build. `dev` stage for local hot reload; `runner` stage is the Next.js **standalone** runtime listening on port 80 as a non-root user. |
+| `Dockerfile`               | Multi-stage build. `dev` stage for local hot reload; `runner` stage is the Next.js **standalone** runtime listening on port 3000 as a non-root user. |
 | `docker-compose.yml`       | **Production.** The platform-contract compose: container `hosting_ennie-coffee_web`, network `client_ennie-coffee_net`, `env_file: .env`, one named volume, capped logs, no Docker labels. |
 | `docker-compose.local.yml` | **Local only.** The same image and topology on `localhost:8080`, so you can check the production build before pushing.                            |
 | `docker-compose.dev.yml`   | **Local only.** Bind-mounted source, hot reload, published on `localhost:3000`.                                                                   |
@@ -38,9 +38,12 @@ A 502 from Traefik almost always means one of these is wrong, and nothing else i
    together.
 2. **Network** — `client_ennie-coffee_net`, declared `external` because the platform creates it
    (and attaches Traefik to it) before the deploy.
-3. **Container port** — **80**, both in the panel (Sites → site → Container port) and in the
-   Dockerfile's `EXPOSE`/`PORT`. The platform's default is 80; if this site was created with
-   3000, change the panel value, not the image.
+3. **Container port** — **3000**, both in the panel (Sites → site → Container port) and in the
+   Dockerfile's `PORT`. This matches the other sites on the platform. The panel's own default
+   for a new site is 80, so check it: if it says 80, either change it to 3000 or leave it and
+   set `PORT=80` in the site's Environment. The server and its health check both follow `PORT`,
+   so moving the port never needs a rebuild — but the two values must agree, and when they do
+   not the only symptom is the platform's "site unavailable" page.
 
 ### Why two local compose files
 
@@ -84,7 +87,8 @@ docker network create client_ennie-coffee_net
 1. **Create the client/site in the panel** with the slug **`ennie-coffee`** (Clients → New Client →
    set the domain; template _None_ for a repo deploy). The container name and network above must
    match this slug.
-2. **Container port** must be **80** — the platform default, matching the Dockerfile's `EXPOSE 80`.
+2. **Container port** must be **3000**, matching the image's `PORT`. Set it explicitly — the
+   panel defaults a new site to 80.
 3. **Environment**: set runtime variables under **Sites → site → Environment**. At minimum:
    - `SITE_URL` — the site's public URL;
    - `JWT_ACCESS_SECRET` and `APP_ENCRYPTION_KEY` — 32+ random characters each

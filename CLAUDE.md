@@ -26,7 +26,7 @@ Ennie Coffee (Ennie Coffee Kávéház) — premium independent coffee shop in Ha
 - Framework: **nextjs** · Language: **typescript** · Package manager: **pnpm**
 - Styling: **tailwind** · UI: **shadcn** · Animation: **gsap**
 - Data: **JSON file store** on a mounted volume (`lib/store/`) · Auth: **none** · CMS: **none**
-- Deployment: **docker** · Docker: enabled (one container, port 80)
+- Deployment: **docker** · Docker: enabled (one container, port 3000)
 
 ## Enabled CEF engines
 

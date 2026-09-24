@@ -23,7 +23,7 @@ services:
       TRUSTED_PROXY_HOPS: '0'
       DATA_DIR: /app/data
     ports:
-      - '8080:80'
+      - '8080:3000'
     volumes:
       # Same volume role as production. `docker compose -f docker-compose.local.yml down -v`
       # resets the site to its seeded state.

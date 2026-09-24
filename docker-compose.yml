@@ -5,7 +5,7 @@
 #
 # Topology:
 #
-#   Traefik ──▶ hosting_ennie-coffee_web  (one Next.js container, port 80)
+#   Traefik ──▶ hosting_ennie-coffee_web  (one Next.js container, port 3000)
 #                        │
 #                        └── ennie-data volume at /app/data
 #
@@ -19,7 +19,9 @@
 # Three names have to match and are the usual cause of a 502 when they do not:
 #   - the container name embeds the client slug "ennie-coffee" — Traefik routes by this name;
 #   - the network is the client's own, created by the platform before the deploy;
-#   - the panel's container port must be 80, which is what this container listens on.
+#   - the panel's container port must be 3000, which is what this container listens on — the
+#     same port the other sites on this platform use. To move it, set PORT in the panel's
+#     Environment; the server and its health check both follow that variable.
 
 services:
   app:
@@ -46,8 +48,13 @@ services:
       DATA_DIR: /app/data
 
     # No published host port: traffic arrives through Traefik, which also terminates TLS.
+    #
+    # Documentation rather than enforcement — on a user-defined bridge network Traefik can reach
+    # any port the process is listening on, whatever is listed here. What decides the port is
+    # PORT (Dockerfile default 3000, overridable from the panel's Environment), and it has to
+    # match the panel's container port for that site.
     expose:
-      - '80'
+      - '3000'
 
     networks:
       - client_ennie-coffee_net
