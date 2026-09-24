@@ -36,14 +36,12 @@ export async function GET(
   try {
     const variant = await readVariant(id, Number(width), format);
     if (!variant) return notFound();
-    // A view over the bytes already read, not `new Uint8Array(buffer)` — that constructor copies,
-    // which would hold every served image in memory twice for the life of the response.
-    const body = new Uint8Array(
-      variant.bytes.buffer,
-      variant.bytes.byteOffset,
-      variant.bytes.byteLength,
-    );
-    return new NextResponse(body, {
+    // This copies, and that is deliberate. A zero-copy view over the Buffer's own memory would be
+    // `new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength)`, but `Buffer.buffer` is
+    // typed `ArrayBufferLike` — possibly shared — and `BodyInit` requires a `Uint8Array<ArrayBuffer>`.
+    // Narrowing it needs an assertion, and the copy is a cold path: responses here are immutable
+    // and cached for a year, so this runs on a visitor's first request for an image and no other.
+    return new NextResponse(new Uint8Array(variant.bytes), {
       status: 200,
       headers: {
         'Content-Type': CONTENT_TYPE[format],
